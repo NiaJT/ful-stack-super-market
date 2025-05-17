@@ -6,7 +6,7 @@ import { Toaster } from "react-hot-toast";
 import ReactQueryClientProvider from "@/provider/ReactQueryClientProvider";
 import NavBar from "../../components/NavBar";
 import Footer from "@/components/Footer";
-import { Box } from "@mui/material";
+import AuthGuard from "@/components/AuthGuard";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,16 +31,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
       >
-        <Toaster />
-        <NavBar />
         <ReactQueryClientProvider>
-          {" "}
-          <Box className="flex-grow"></Box>
-          {children}
+          <Toaster />
+          <AuthGuard>
+            <NavBar />
+            {children}
+            <Footer />
+          </AuthGuard>
         </ReactQueryClientProvider>
-        <Footer />
       </body>
     </html>
   );

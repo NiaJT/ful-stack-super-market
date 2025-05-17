@@ -12,6 +12,9 @@ const ProductCard = (props: IProductCard) => {
     >
       <Box className="relative h-[180px] w-full cursor-pointer overflow-hidden">
         <Image
+          onClick={() => {
+            router.push(`/product-detail/${props._id}`);
+          }}
           src="/mouseImage.jpg"
           alt="Wireless Mouse"
           fill

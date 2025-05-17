@@ -3,15 +3,19 @@ import React, { useState } from "react";
 import { Box, Button, Typography, IconButton, Drawer } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
+import { useRouter } from "next/navigation";
 
 const NavBar = () => {
   const navLinks = ["Home", "Products", "About", "Contact"];
   const [mobileOpen, setMobileOpen] = useState(false);
-
+  const router = useRouter();
   const toggleDrawer = () => {
     setMobileOpen(!mobileOpen);
   };
-
+  const logOut = () => {
+    window.localStorage.clear();
+    router.replace("/login");
+  };
   const drawer = (
     <Box className="w-[250px] h-full bg-white p-4">
       <Box className="flex justify-end mb-6">
@@ -26,7 +30,7 @@ const NavBar = () => {
               key={link}
               className="text-gray-700 hover:bg-gray-100 rounded-md px-3 py-2 cursor-pointer"
             >
-              <a href="#" onClick={toggleDrawer} className="block font-medium">
+              <a href="#" className="block font-medium">
                 {link}
               </a>
             </li>
@@ -36,7 +40,7 @@ const NavBar = () => {
               fullWidth
               variant="contained"
               className="bg-green-600 hover:bg-green-700 text-white"
-              onClick={toggleDrawer}
+              onClick={logOut}
             >
               Log Out
             </Button>
@@ -68,6 +72,7 @@ const NavBar = () => {
             ))}
             <li>
               <Button
+                onClick={logOut}
                 variant="outlined"
                 sx={{
                   backgroundColor: "white",
@@ -75,7 +80,7 @@ const NavBar = () => {
                   borderColor: "green",
                   borderRadius: "10px",
                   "&:hover": {
-                    backgroundColor: "#f0fdf4", // very light green
+                    backgroundColor: "#f0fdf4",
                     borderColor: "darkgreen",
                   },
                 }}
@@ -86,7 +91,6 @@ const NavBar = () => {
           </ul>
         </nav>
 
-        {/* Hamburger (Mobile Only) */}
         <Box className="block md:hidden">
           <IconButton className="text-white" onClick={toggleDrawer}>
             <MenuIcon />
