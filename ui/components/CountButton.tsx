@@ -1,24 +1,40 @@
 import React, { useState } from "react";
 import { AddSharp, Remove } from "@mui/icons-material";
-import { Box } from "@mui/material";
-const CountButton = () => {
+import { Box, IconButton, Typography } from "@mui/material";
+
+const CountButton = (props: { quantity: number }) => {
   const [count, setCount] = useState(1);
+
   return (
-          <Box className="flex justify-center" >
+    <Box className="flex items-center space-x-4">
+      <Typography variant="h6" className="min-w-max">
         Quantity:
-        <Remove  color="secondary"
-          onClick={() => {
-            setCount(count > 1 ? count - 1 : count);
-          }}
-        ></Remove>
-         {count}
-        <AddSharp  color="secondary"
-          onClick={() => {
-            setCount(count + 1);
-          }}
-        ></AddSharp>
+      </Typography>
+
+      <Box className="flex items-center space-x-2 px-3 py-1">
+        <IconButton
+          color="secondary"
+          size="small"
+          disabled={count === 1}
+          onClick={() => setCount(count - 1)}
+        >
+          <Remove fontSize="small" />
+        </IconButton>
+
+        <Typography variant="body1" className="w-6 text-center">
+          {count}
+        </Typography>
+
+        <IconButton
+          color="secondary"
+          size="small"
+          disabled={count == props.quantity}
+          onClick={() => setCount(count + 1)}
+        >
+          <AddSharp fontSize="small" />
+        </IconButton>
       </Box>
-   
+    </Box>
   );
 };
 

@@ -4,9 +4,8 @@ import React, { useEffect, useState } from "react";
 import SellerCardContainer from "./SellerCardContainer";
 import BuyerCardContainer from "./BuyerCardContainer";
 
-
 const DecideContainer = () => {
-  const [role, setRole] = useState("role");
+  const [role, setRole] = useState("");
   useEffect(() => {
     const userRole = getUserRole() as string;
     setRole(userRole);

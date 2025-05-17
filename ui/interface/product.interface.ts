@@ -1,12 +1,10 @@
 export interface IProduct {
   _id: string;
-  __v: number;
   name: string;
   brand: string;
   category: string;
-  description: string;
-  freeShipping: boolean;
-  image: string | null;
+  shortDescription: string;
+  image: string | undefined;
   price: number;
   quantity: number;
   sellerId: string;

@@ -33,7 +33,7 @@ const ProductDetail = () => {
   const router = useRouter();
   const params = useParams();
   const productId = params.id as string;
-  const [role, setRole] = useState("buyer");
+  const [role, setRole] = useState("");
   useEffect(() => {
     const userRole = getUserRole() as string;
     setRole(userRole);
@@ -52,7 +52,7 @@ const ProductDetail = () => {
   }
 
   if (error) {
-    toast.error(error?.response?.data?.message);
+    toast.error(error?.message);
     return;
   }
 
@@ -150,7 +150,7 @@ const ProductDetail = () => {
         )}
         {role == "buyer" && (
           <Box className="flex flex-col gap-4 justify-center md:justify-center">
-            <CountButton />
+            <CountButton quantity={product.quantity} />
             <Box className="flex gap-4 mt-4 justify-center md:justify-center">
               <AddtoCart />
               <BuyButton />
