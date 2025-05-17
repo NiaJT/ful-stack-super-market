@@ -4,7 +4,7 @@ import "@/app/globals.css";
 
 import { Toaster } from "react-hot-toast";
 import ReactQueryClientProvider from "@/provider/ReactQueryClientProvider";
-import { Box } from "@mui/material";
+
 import GuestGuard from "@/components/GuestGuard";
 
 const geistSans = Geist({
@@ -33,12 +33,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased h-full`}
       >
         <ReactQueryClientProvider>
-          <Toaster />{" "}
-          <GuestGuard>
-            <Box className="flex justify-center items-center h-screen">
-              {children}
-            </Box>
-          </GuestGuard>
+          <Toaster /> <GuestGuard>{children}</GuestGuard>
         </ReactQueryClientProvider>
       </body>
     </html>

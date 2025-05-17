@@ -51,7 +51,7 @@ const NavBar = () => {
   );
 
   return (
-    <Box className="bg-green-700 shadow-sm w-full py-3 px-4">
+    <Box className="bg-green-700 shadow-sm w-full py-3 px-4 mb-4">
       <Box className="max-w-7xl mx-auto flex items-center justify-between">
         <Typography
           variant="h5"

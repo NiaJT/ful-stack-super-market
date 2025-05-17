@@ -23,7 +23,9 @@ import {
 } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
 import { Formik } from "formik";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import toast from "react-hot-toast";
 export interface IAddProductForm {
   name: string;
@@ -36,6 +38,7 @@ export interface IAddProductForm {
 }
 const AddProductForm = () => {
   const router = useRouter();
+  const [localUrl, setLocalUrl] = useState<string | null>(null);
   const { isPending, mutate } = useMutation({
     mutationKey: ["add-product"],
     mutationFn: async (values: IAddProductForm) => {
@@ -77,6 +80,29 @@ const AddProductForm = () => {
               onSubmit={formik.handleSubmit}
             >
               <Typography variant="h5">Add Product</Typography>
+              {localUrl && (
+                <Box className="relative h-[250px] w-full">
+                  <Image
+                    src={localUrl}
+                    alt="Product Image"
+                    fill
+                    style={{
+                      objectFit: "cover",
+                    }}
+                  />
+                </Box>
+              )}
+              <input
+                type="file"
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  if (!event || !event.target || !event.target.files) {
+                    return;
+                  }
+                  const image = event.target.files[0];
+                  const Url = URL.createObjectURL(image);
+                  setLocalUrl(Url);
+                }}
+              ></input>
               <FormControl fullWidth>
                 <TextField
                   label="Name"
