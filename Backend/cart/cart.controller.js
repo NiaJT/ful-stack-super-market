@@ -25,9 +25,16 @@ router.post(
     const orderedQuantity = req.body.orderedQuantity;
     const buyerId = req.loggedInUser;
     const product = await productTable.findOne({ _id: productId });
+    const cartExists = await CartTable.findOne({ productId,buyerId });
+    if (cartExists) {
+      return res.status(409).send({
+        message: "Product already in cart. Update quantity in the cart",
+      });
+    }
     if (!product) {
       return res.status(404).send({ message: "Product does not exist" });
     }
+
     if (orderedQuantity > product.quantity) {
       return res.status(409).send({
         message: "Order quantity should not be more than product quantity",

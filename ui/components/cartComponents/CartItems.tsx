@@ -18,6 +18,7 @@ import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import { axiosInstance } from "@/lib/axios.instance";
 import { AddSharp, Remove } from "@mui/icons-material";
+import FlushCart from "./FlushCart";
 
 interface ICartItem {
   _id: string;
@@ -78,6 +79,8 @@ const CartItems = () => {
 
   return (
     <Box className="flex flex-col items-center w-full px-4 md:px-0 md:w-3/4 lg:w-2/3 my-10">
+      <FlushCart />
+      <h2 className="text-2xl font-semibold mb-4">Your Cart Items</h2>
       <TableContainer component={Paper} elevation={3} sx={{ borderRadius: 3 }}>
         <Table sx={{ minWidth: 650 }} aria-label="cart table">
           <TableHead sx={{ backgroundColor: "#f5f5f5" }}>

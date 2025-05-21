@@ -43,7 +43,7 @@ const LoginForm = () => {
   });
 
   return (
-    <Box>
+    <Box className="flex justify-center items-center h-screen">
       {isPending && <LinearProgress />}
       <Formik
         initialValues={{

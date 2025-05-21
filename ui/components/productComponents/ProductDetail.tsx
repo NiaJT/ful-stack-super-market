@@ -2,6 +2,7 @@
 import { AddSharp, Remove } from "@mui/icons-material";
 import { IconButton, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import { IError } from "@/interface/error.interface";
 import {
   Box,
   Button,
@@ -41,12 +42,19 @@ const ProductDetail = () => {
     setRole(userRole);
   }, []);
   console.log(role);
+  
   const { isPending, data, error } = useQuery({
     queryKey: ["get-product-detail"],
     queryFn: async () => {
       return await axiosInstance.get(`/product/detail/${productId}`);
     },
   });
+  useEffect(() => {
+    if (error) {
+      const err = error as IError;
+      toast.error(err.response?.data?.message || "Something went wrong.");
+    }
+  }, [error]);
   const product: IProductDetail = data?.data?.productDetails;
 
   if (isPending) {
@@ -54,8 +62,7 @@ const ProductDetail = () => {
   }
 
   if (error) {
-    toast.error(error?.message);
-    return;
+    return null;
   }
 
   return (

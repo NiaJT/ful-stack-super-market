@@ -49,7 +49,7 @@ const RegisterForm = () => {
     return <LinearProgress />;
   }
   return (
-    <Box className="flex item-center justify-center mt-4">
+    <Box className="flex justify-center items-center min-h-screen mt-4">
       <Formik
         initialValues={{
           email: "",

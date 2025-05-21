@@ -18,11 +18,17 @@
     --background: #ededed;
   }
 }
-
+html {
+  margin: 0;
+  padding: 0;
+  scroll-behavior: smooth;
+}
 body {
+  margin: 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: start;
   align-items: center;
   min-height: 100vh;
   background: var(--background);

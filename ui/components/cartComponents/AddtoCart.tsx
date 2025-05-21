@@ -1,3 +1,4 @@
+"use client"
 import React from "react";
 import { Button } from "@mui/material";
 
@@ -6,6 +7,8 @@ import { useMutation } from "@tanstack/react-query";
 import { axiosInstance } from "@/lib/axios.instance";
 
 import toast from "react-hot-toast";
+import { IError } from "@/interface/error.interface";
+import { useRouter } from "next/navigation";
 
 interface IData {
   message: string;
@@ -13,6 +16,7 @@ interface IData {
 }
 
 const AddtoCart = (props: { productId: string; quantity: number }) => {
+  const router = useRouter();
   const { isPending, mutate } = useMutation({
     mutationKey: ["add-to-cart"],
     mutationFn: async (values: {
@@ -25,8 +29,9 @@ const AddtoCart = (props: { productId: string; quantity: number }) => {
     onSuccess: (response: IData) => {
       toast.success(response?.message);
     },
-    onError: (error: Error) => {
-      toast.error(error?.message);
+    onError: (error: IError) => {
+      toast.error(error.response.data.message);
+      router.replace("/cart");
     },
   });
   if (isPending) {
