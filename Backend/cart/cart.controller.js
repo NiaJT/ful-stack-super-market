@@ -34,7 +34,7 @@ router.post(
       });
     }
     await CartTable.create({ buyerId, productId, orderedQuantity });
-    return res.status(200).send({ message: "adding item to cart" });
+    return res.status(200).send({ message: "Added Item to Cart Successfully" });
   }
 );
 router.delete(
@@ -63,7 +63,7 @@ router.delete("/cart/flush", isBuyer, async (req, res) => {
   return res.status(200).send({ message: "Cart Flushed Successfully" });
 });
 //cart list
-router.post("/cart/list", isBuyer, async (req, res) => {
+router.get("/cart/list", isBuyer, async (req, res) => {
   const userId = req.loggedInUser;
   const CartList = await CartTable.aggregate([
     { $match: { buyerId: userId } },
@@ -79,11 +79,12 @@ router.post("/cart/list", isBuyer, async (req, res) => {
       $project: {
         orderedQuantity: 1,
         product: {
-          Name: { $first: "$productDetail.name" },
-          Price: { $first: "$productDetail.price" },
-          Quantity: { $first: "$productDetail.quantity" },
-          Category: { $first: "$productDetail.category" },
-          Brand: { $first: "$productDetail.brand" },
+          name: { $first: "$productDetail.name" },
+          price: { $first: "$productDetail.price" },
+          quantity: { $first: "$productDetail.quantity" },
+          category: { $first: "$productDetail.category" },
+          brand: { $first: "$productDetail.brand" },
+          totalQuantity: { $first: "$productDetail.quantity" },
         },
       },
     },
