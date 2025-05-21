@@ -5,7 +5,7 @@ import { Box, CircularProgress, Pagination } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
-import ProductCard from "./ProductCard";
+import ProductCard from "../productComponents/ProductCard";
 
 const BuyerCardContainer = (props: { userRole: string }) => {
   const [currentPage, setPage] = useState(1);

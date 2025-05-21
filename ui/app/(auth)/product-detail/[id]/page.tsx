@@ -1,9 +1,7 @@
-import React from 'react'
-import ProductDetail from "@/components/ProductDetail.tsx"
+import React from "react";
+import ProductDetail from "@/components/productComponents/ProductDetail";
 const ProductDetailPage = () => {
-  return (
-   <ProductDetail/>
-  )
-}
+  return <ProductDetail />;
+};
 
-export default ProductDetailPage
+export default ProductDetailPage;

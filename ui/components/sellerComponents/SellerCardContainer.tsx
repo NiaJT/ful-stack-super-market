@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import ProductCard from "./ProductCard";
+import ProductCard from "../productComponents/ProductCard";
 import { Box, CircularProgress, Pagination } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { axiosInstance } from "@/lib/axios.instance";

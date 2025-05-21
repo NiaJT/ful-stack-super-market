@@ -19,7 +19,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Formik } from "formik";
-import { IAddProductForm } from "./AddProductForm";
+import { IAddProductForm } from "./sellerComponents/AddProductForm";
 import { useParams, useRouter } from "next/navigation";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { axiosInstance } from "@/lib/axios.instance";

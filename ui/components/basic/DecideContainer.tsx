@@ -1,8 +1,8 @@
 "use client";
 import getUserRole from "@/utilities/get.user.role";
 import React, { useEffect, useState } from "react";
-import SellerCardContainer from "./SellerCardContainer";
-import BuyerCardContainer from "./BuyerCardContainer";
+import SellerCardContainer from "../sellerComponents/SellerCardContainer";
+import BuyerCardContainer from "../buyerComponents/BuyerCardContainer";
 
 const DecideContainer = () => {
   const [role, setRole] = useState("");

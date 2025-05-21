@@ -1,4 +1,6 @@
 "use client";
+import { AddSharp, Remove } from "@mui/icons-material";
+import { IconButton, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import {
   Box,
@@ -10,15 +12,14 @@ import {
 } from "@mui/material";
 import Image from "next/image";
 import EditIcon from "@mui/icons-material/Edit";
-import DeleteProductDialog from "./DeleteProductDialog";
+import DeleteProductDialog from "../basic/DeleteProductDialog";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
 import { axiosInstance } from "@/lib/axios.instance";
 import toast from "react-hot-toast";
-import AddtoCart from "./AddtoCart";
-import CountButton from "./CountButton";
-import BuyButton from "./BuyButton";
-import getUserRole from "../utilities/get.user.role";
+import AddtoCart from "../cartComponents/AddtoCart";
+import BuyButton from "../buyerComponents/BuyButton";
+import getUserRole from "../../utilities/get.user.role";
 
 interface IProductDetail {
   name: string;
@@ -34,6 +35,7 @@ const ProductDetail = () => {
   const params = useParams();
   const productId = params.id as string;
   const [role, setRole] = useState("");
+  const [count, setCount] = useState(1);
   useEffect(() => {
     const userRole = getUserRole() as string;
     setRole(userRole);
@@ -150,9 +152,67 @@ const ProductDetail = () => {
         )}
         {role == "buyer" && (
           <Box className="flex flex-col gap-4 justify-center md:justify-center">
-            <CountButton quantity={product.quantity} />
+            <Box className="flex items-center space-x-4">
+              <Typography variant="h6" className="min-w-max">
+                Quantity:
+              </Typography>
+
+              <Box className="flex items-center space-x-2 px-3 py-1">
+                <IconButton
+                  color="secondary"
+                  size="small"
+                  disabled={count === 1}
+                  onClick={() => setCount(count - 1)}
+                >
+                  <Remove fontSize="small" />
+                </IconButton>
+
+                <Box className="w-16">
+                  <TextField
+                    variant="outlined"
+                    size="small"
+                    type="number"
+                    value={count}
+                    onChange={(e) => {
+                      const value = Number(e.target.value);
+                      if (value >= 1 && value <= product.quantity) {
+                        setCount(value);
+                      } else if (value < 1 || isNaN(value)) {
+                        setCount(1);
+                      } else {
+                        setCount(product.quantity);
+                      }
+                    }}
+                    sx={{
+                      // Hide arrows on number inputs (Chrome, Safari, Edge, Opera)
+                      "& input[type=number]::-webkit-inner-spin-button": {
+                        WebkitAppearance: "none",
+                        margin: 0,
+                      },
+                      "& input[type=number]::-webkit-outer-spin-button": {
+                        WebkitAppearance: "none",
+                        margin: 0,
+                      },
+                      // Hide arrows on Firefox
+                      "& input[type=number]": {
+                        MozAppearance: "textfield",
+                      },
+                    }}
+                  />
+                </Box>
+
+                <IconButton
+                  color="secondary"
+                  size="small"
+                  disabled={count == product.quantity}
+                  onClick={() => setCount(count + 1)}
+                >
+                  <AddSharp fontSize="small" />
+                </IconButton>
+              </Box>
+            </Box>
             <Box className="flex gap-4 mt-4 justify-center md:justify-center">
-              <AddtoCart />
+              <AddtoCart productId={productId} quantity={count} />
               <BuyButton />
             </Box>
           </Box>

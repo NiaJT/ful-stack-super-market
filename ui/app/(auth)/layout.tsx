@@ -4,9 +4,9 @@ import "@/app/globals.css";
 
 import { Toaster } from "react-hot-toast";
 import ReactQueryClientProvider from "@/provider/ReactQueryClientProvider";
-import NavBar from "../../components/NavBar";
-import Footer from "@/components/Footer";
-import AuthGuard from "@/components/AuthGuard";
+import NavBar from "../../components/basic/NavBar";
+import Footer from "@/components/basic/Footer";
+import AuthGuard from "@/components/guards/AuthGuard";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

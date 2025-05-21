@@ -5,7 +5,7 @@ import "@/app/globals.css";
 import { Toaster } from "react-hot-toast";
 import ReactQueryClientProvider from "@/provider/ReactQueryClientProvider";
 
-import GuestGuard from "@/components/GuestGuard";
+import GuestGuard from "@/components/guards/GuestGuard";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,7 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased h-full`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased `}
       >
         <ReactQueryClientProvider>
           <Toaster /> <GuestGuard>{children}</GuestGuard>

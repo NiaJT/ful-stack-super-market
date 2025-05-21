@@ -1,6 +1,6 @@
 import { Box, Typography, Button } from "@mui/material";
 import Image from "next/image";
-import { IProductCard } from "./SellerCardContainer";
+import { IProductCard } from "../sellerComponents/SellerCardContainer";
 import { useRouter } from "next/navigation";
 
 const ProductCard = (props: IProductCard) => {
