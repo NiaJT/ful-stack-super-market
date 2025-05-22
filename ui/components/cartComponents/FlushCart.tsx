@@ -23,6 +23,7 @@ const FlushCart = () => {
     onSuccess: (response: IResponse) => {
       toast.success(response.data.message);
       queryClient.invalidateQueries({ queryKey: ["cart-items"] });
+        queryClient.invalidateQueries({queryKey:["get-cart-items-count"]});
     },
     onError: (error: IError) => {
       console.error(error);

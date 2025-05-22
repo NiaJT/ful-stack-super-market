@@ -6,7 +6,7 @@ import { addItemtoCartSchema } from "./cart.validation.js";
 import mongoose from "mongoose";
 import productTable from "../product/product.model.js";
 import CartTable from "./cart.model.js";
-import { isOwnerofProduct } from "./../product/product.middleware.js";
+import { cartCount } from "./cart.service.js";
 const router = express.Router();
 router.post(
   "/cart/item/add",
@@ -99,4 +99,5 @@ router.get("/cart/list", isBuyer, async (req, res) => {
   ]);
   return res.status(200).send({ message: "Success", CartList });
 });
+router.get("/cart/item/count", isBuyer, cartCount);
 export { router as cartController };

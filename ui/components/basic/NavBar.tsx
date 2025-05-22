@@ -7,6 +7,7 @@ import {
   IconButton,
   Drawer,
   Divider,
+  Badge,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
@@ -16,6 +17,9 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import CategoryIcon from "@mui/icons-material/Category";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import LogoutIcon from "@mui/icons-material/Logout";
+import { useQuery } from "@tanstack/react-query";
+import { axiosInstance } from "@/lib/axios.instance";
+import { IError } from "@/interface/error.interface";
 
 const NavBar = () => {
   const router = useRouter();
@@ -27,13 +31,13 @@ const NavBar = () => {
       setRole(userRole);
     }
   }, []);
-  const hasAccess = (role: string, itemName: string) => {
-    const accesMatrix: Record<string, string[]> = {
-      seller: ["Home", "Products", "Orders"],
-      buyer: ["Home", "Products", "Cart", "Orders"],
-    };
-    return accesMatrix[role]?.includes(itemName);
-  };
+  const { isPending, data, error } = useQuery<number, IError>({
+    queryKey: ["get-cart-items-count"],
+    queryFn: async () => {
+      const response = await axiosInstance.get("/cart/item/count");
+      return response.data.cartCount;
+    },
+  });
 
   const navLinks = [
     { name: "Home", link: "/", icon: <HomeIcon sx={{ color: "white" }} /> },
@@ -41,11 +45,6 @@ const NavBar = () => {
       name: "Products",
       link: "/products",
       icon: <CategoryIcon sx={{ color: "white" }} />,
-    },
-    {
-      name: "Cart",
-      link: "/cart",
-      icon: <ShoppingCartIcon sx={{ color: "white" }} />,
     },
     {
       name: "Orders",
@@ -77,27 +76,59 @@ const NavBar = () => {
 
         <nav>
           <ul className="flex flex-col gap-3">
-            {navLinks
-              .filter((item) => hasAccess(role, item.name))
-              .map((item, index) => (
-                <li key={index}>
-                  <Button
-                    startIcon={item.icon}
-                    fullWidth
-                    onClick={() => {
-                      router.replace(item.link);
-                      toggleDrawer();
-                    }}
+            {navLinks.map((item, index) => (
+              <li key={index}>
+                <Button
+                  startIcon={item.icon}
+                  fullWidth
+                  onClick={() => {
+                    router.replace(item.link);
+                    toggleDrawer();
+                  }}
+                  sx={{
+                    justifyContent: "flex-start", // Align icon and text to the left
+                    textTransform: "none", // Optional: prevent all caps
+                  }}
+                >
+                  <Typography
+                    variant="body1"
+                    className="text-white font-medium"
+                    sx={{ textAlign: "left" }} // Optional: ensures text itself aligns left
                   >
-                    <Typography
-                      variant="body1"
-                      className="text-white font-medium"
-                    >
-                      {item.name}
-                    </Typography>
-                  </Button>
-                </li>
-              ))}
+                    {item.name}
+                  </Typography>
+                </Button>
+              </li>
+            ))}
+            {role === "buyer" && (
+              <li>
+                <Button
+                  fullWidth
+                  startIcon={
+                    <Badge badgeContent={data ? data : 0} color="secondary">
+                      <ShoppingCartIcon sx={{ color: "white" }} />
+                    </Badge>
+                  }
+                  onClick={() => {
+                    console.log("Cart clicked");
+                    router.push("/cart");
+                    toggleDrawer();
+                  }}
+                  sx={{
+                    justifyContent: "flex-start", // Align icon and text to the left
+                    textTransform: "none", // Optional: prevent all caps
+                  }}
+                >
+                  <Typography
+                    variant="body1"
+                    className="text-white font-medium"
+                    sx={{ textAlign: "left" }} // Optional: ensures text itself aligns left
+                  >
+                    Cart
+                  </Typography>
+                </Button>
+              </li>
+            )}
           </ul>
         </nav>
       </Box>
@@ -140,24 +171,50 @@ const NavBar = () => {
         {/* Desktop Menu */}
         <nav className="hidden md:block">
           <ul className="flex items-center gap-6">
-            {navLinks
-              .filter((item) => hasAccess(role, item.name))
-              .map((item, index) => (
-                <li key={index}>
-                  <Button
-                    startIcon={item.icon}
-                    onClick={() => router.replace(item.link)}
-                    className="text-white hover:bg-green-800 normal-case"
+            {navLinks.map((item, index) => (
+              <li key={index}>
+                <Button
+                  startIcon={item.icon}
+                  onClick={() => router.replace(item.link)}
+                  className="text-white hover:bg-green-800 normal-case"
+                >
+                  <Typography
+                    variant="body1"
+                    className="text-white font-medium"
                   >
-                    <Typography
-                      variant="body1"
-                      className="text-white font-medium"
-                    >
-                      {item.name}
-                    </Typography>
-                  </Button>
-                </li>
-              ))}
+                    {item.name}
+                  </Typography>
+                </Button>
+              </li>
+            ))}
+            {role === "buyer" && (
+              <li>
+                <Button
+                  fullWidth
+                  startIcon={
+                    <Badge badgeContent={data ? data : 0} color="secondary">
+                      <ShoppingCartIcon sx={{ color: "white" }} />
+                    </Badge>
+                  }
+                  onClick={() => {
+                    console.log("Cart clicked");
+                    router.push("/cart");
+                  }}
+                  sx={{
+                    justifyContent: "flex-start", // Align icon and text to the left
+                    textTransform: "none", // Optional: prevent all caps
+                  }}
+                >
+                  <Typography
+                    variant="body1"
+                    className="text-white font-medium"
+                    sx={{ textAlign: "left" }} // Optional: ensures text itself aligns left
+                  >
+                    Cart
+                  </Typography>
+                </Button>
+              </li>
+            )}
             <li>
               <Button
                 onClick={logOut}
@@ -192,7 +249,7 @@ const NavBar = () => {
             open={mobileOpen}
             onClose={toggleDrawer}
             ModalProps={{ keepMounted: true }}
-            anchor="right"
+            anchor="left"
             PaperProps={{
               sx: {
                 width: 280,

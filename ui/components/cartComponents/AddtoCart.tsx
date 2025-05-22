@@ -1,9 +1,9 @@
-"use client"
+"use client";
 import React from "react";
 import { Button } from "@mui/material";
 
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { axiosInstance } from "@/lib/axios.instance";
 
 import toast from "react-hot-toast";
@@ -16,6 +16,7 @@ interface IData {
 }
 
 const AddtoCart = (props: { productId: string; quantity: number }) => {
+  const queryClient = useQueryClient();
   const router = useRouter();
   const { isPending, mutate } = useMutation({
     mutationKey: ["add-to-cart"],
@@ -24,10 +25,12 @@ const AddtoCart = (props: { productId: string; quantity: number }) => {
       orderedQuantity: number;
     }) => {
       const response = await axiosInstance.post("/cart/item/add", values);
+
       return response.data as IData;
     },
     onSuccess: (response: IData) => {
       toast.success(response?.message);
+      queryClient.invalidateQueries({ queryKey: ["get-cart-items-count"] });
     },
     onError: (error: IError) => {
       toast.error(error.response.data.message);
