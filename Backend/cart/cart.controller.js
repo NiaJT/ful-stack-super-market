@@ -25,7 +25,7 @@ router.post(
     const orderedQuantity = req.body.orderedQuantity;
     const buyerId = req.loggedInUser;
     const product = await productTable.findOne({ _id: productId });
-    const cartExists = await CartTable.findOne({ productId,buyerId });
+    const cartExists = await CartTable.findOne({ productId, buyerId });
     if (cartExists) {
       return res.status(409).send({
         message: "Product already in cart. Update quantity in the cart",
@@ -84,6 +84,7 @@ router.get("/cart/list", isBuyer, async (req, res) => {
     },
     {
       $project: {
+        _id: 1,
         orderedQuantity: 1,
         product: {
           name: { $first: "$productDetail.name" },

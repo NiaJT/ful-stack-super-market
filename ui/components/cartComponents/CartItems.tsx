@@ -9,7 +9,6 @@ import {
   TableRow,
   Paper,
   Box,
-  Button,
   Chip,
   IconButton,
   TextField,
@@ -19,6 +18,7 @@ import { useQuery } from "@tanstack/react-query";
 import { axiosInstance } from "@/lib/axios.instance";
 import { AddSharp, Remove } from "@mui/icons-material";
 import FlushCart from "./FlushCart";
+import RemoveCartItem from "./RemoveCartItem";
 
 interface ICartItem {
   _id: string;
@@ -44,7 +44,8 @@ const CartItems = () => {
     },
   });
 
-  // Initialize counts when data loads or updates
+  // Initialize counts state with ordered quantities from the data
+  // when the data is fetched
   useEffect(() => {
     if (data) {
       const initialCounts: Record<string, number> = {};
@@ -54,7 +55,8 @@ const CartItems = () => {
       setCounts(initialCounts);
     }
   }, [data]);
-
+  // Handle count change for each item
+  // Ensure the count is between 1 and the maximum quantity available
   const handleCountChange = (id: string, value: number, max: number) => {
     const newValue = isNaN(value) ? 1 : Math.max(1, Math.min(value, max));
     setCounts((prev) => ({ ...prev, [id]: newValue }));
@@ -179,9 +181,7 @@ const CartItems = () => {
                     ${count * item.product.price}
                   </TableCell>
                   <TableCell align="center">
-                    <Button color="error" variant="contained">
-                      Remove
-                    </Button>
+                    <RemoveCartItem _id={item._id} />
                   </TableCell>
                 </TableRow>
               );
