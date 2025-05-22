@@ -23,8 +23,8 @@ const RemoveCartItem = (props: { _id: string }) => {
   const queryClient = useQueryClient();
   const { mutate, isPending } = useMutation({
     mutationKey: ["delete-cart-item"],
-    mutationFn: async (): Promise<IResponse> => {
-      return await axiosInstance.delete(`/cart/item/delete/${props._id}`);
+    mutationFn: async (cartId: string): Promise<IResponse> => {
+      return await axiosInstance.delete(`/cart/item/delete/${cartId}`);
     },
     onSuccess: (response: IResponse) => {
       toast.success(response.data.message);
@@ -71,7 +71,7 @@ const RemoveCartItem = (props: { _id: string }) => {
           </Button>
           <Button
             onClick={() => {
-              mutate();
+              mutate(props._id);
               handleClose();
             }}
             variant="contained"

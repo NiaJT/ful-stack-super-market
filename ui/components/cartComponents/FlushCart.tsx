@@ -38,7 +38,7 @@ const FlushCart = () => {
   return (
     <Box className="flex w-full justify-start items-center b-4">
       <Button
-        fullWidth
+        
         variant="contained"
         color="error"
         startIcon={<DeleteIcon />}

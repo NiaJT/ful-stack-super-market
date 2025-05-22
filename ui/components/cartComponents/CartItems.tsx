@@ -12,6 +12,7 @@ import {
   Chip,
   IconButton,
   TextField,
+  Button,
 } from "@mui/material";
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
@@ -19,7 +20,7 @@ import { axiosInstance } from "@/lib/axios.instance";
 import { AddSharp, Remove } from "@mui/icons-material";
 import FlushCart from "./FlushCart";
 import RemoveCartItem from "./RemoveCartItem";
-
+import { useRouter } from "next/navigation";
 interface ICartItem {
   _id: string;
   orderedQuantity: number;
@@ -35,6 +36,7 @@ interface ICartItem {
 
 const CartItems = () => {
   const [counts, setCounts] = useState<Record<string, number>>({});
+  const router = useRouter();
 
   const { isPending, data, error } = useQuery<ICartItem[]>({
     queryKey: ["cart-items"],
@@ -68,8 +70,24 @@ const CartItems = () => {
 
   if (data?.length === 0)
     return (
-      <Box className="flex flex-col items-center mt-10">
+      <Box
+        className="flex flex-col justify-center items-center mt-10 w-1/3 p-8 g-4"
+        sx={{
+          boxShadow:
+            "rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px",
+        }}
+      >
         <h2 className="text-xl font-semibold">Your cart is empty</h2>
+        <Button
+          color="secondary"
+          variant="contained"
+          onClick={() => {
+            router.replace("/");
+          }}
+        >
+          {" "}
+          Continue Shopping
+        </Button>
       </Box>
     );
 

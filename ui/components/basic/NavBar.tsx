@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -20,6 +20,20 @@ import LogoutIcon from "@mui/icons-material/Logout";
 const NavBar = () => {
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [role, setRole] = useState("");
+  useEffect(() => {
+    const userRole = localStorage.getItem("role");
+    if (userRole) {
+      setRole(userRole);
+    }
+  }, []);
+  const hasAccess = (role: string, itemName: string) => {
+    const accesMatrix: Record<string, string[]> = {
+      seller: ["Home", "Products", "Orders"],
+      buyer: ["Home", "Products", "Cart", "Orders"],
+    };
+    return accesMatrix[role]?.includes(itemName);
+  };
 
   const navLinks = [
     { name: "Home", link: "/", icon: <HomeIcon sx={{ color: "white" }} /> },
@@ -63,25 +77,27 @@ const NavBar = () => {
 
         <nav>
           <ul className="flex flex-col gap-3">
-            {navLinks.map((item, index) => (
-              <li key={index}>
-                <Button
-                  startIcon={item.icon}
-                  fullWidth
-                  onClick={() => {
-                    router.replace(item.link);
-                    toggleDrawer();
-                  }}
-                >
-                  <Typography
-                    variant="body1"
-                    className="text-white font-medium"
+            {navLinks
+              .filter((item) => hasAccess(role, item.name))
+              .map((item, index) => (
+                <li key={index}>
+                  <Button
+                    startIcon={item.icon}
+                    fullWidth
+                    onClick={() => {
+                      router.replace(item.link);
+                      toggleDrawer();
+                    }}
                   >
-                    {item.name}
-                  </Typography>
-                </Button>
-              </li>
-            ))}
+                    <Typography
+                      variant="body1"
+                      className="text-white font-medium"
+                    >
+                      {item.name}
+                    </Typography>
+                  </Button>
+                </li>
+              ))}
           </ul>
         </nav>
       </Box>
@@ -124,22 +140,24 @@ const NavBar = () => {
         {/* Desktop Menu */}
         <nav className="hidden md:block">
           <ul className="flex items-center gap-6">
-            {navLinks.map((item, index) => (
-              <li key={index}>
-                <Button
-                  startIcon={item.icon}
-                  onClick={() => router.replace(item.link)}
-                  className="text-white hover:bg-green-800 normal-case"
-                >
-                  <Typography
-                    variant="body1"
-                    className="text-white font-medium"
+            {navLinks
+              .filter((item) => hasAccess(role, item.name))
+              .map((item, index) => (
+                <li key={index}>
+                  <Button
+                    startIcon={item.icon}
+                    onClick={() => router.replace(item.link)}
+                    className="text-white hover:bg-green-800 normal-case"
                   >
-                    {item.name}
-                  </Typography>
-                </Button>
-              </li>
-            ))}
+                    <Typography
+                      variant="body1"
+                      className="text-white font-medium"
+                    >
+                      {item.name}
+                    </Typography>
+                  </Button>
+                </li>
+              ))}
             <li>
               <Button
                 onClick={logOut}
