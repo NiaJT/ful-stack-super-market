@@ -1,6 +1,5 @@
-import EditProductForm from "@/components/EditProductForm";
 import React from "react";
-
+import EditProductForm from "@/components/sellerComponents/EditProductForm";
 const page = () => {
   return <EditProductForm />;
 };

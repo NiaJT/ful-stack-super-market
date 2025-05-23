@@ -24,7 +24,7 @@ const SellerCardContainer = (props: { userRole: string }) => {
     queryFn: async () => {
       return await axiosInstance.post("/product/seller/list", {
         page: currentPage,
-        limit: 5,
+        limit: 10,
       });
     },
     enabled: props.userRole === "seller",

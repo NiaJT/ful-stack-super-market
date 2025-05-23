@@ -33,7 +33,6 @@ interface IProductDetail {
   description: string;
   image?: string;
 }
-// Unchanged imports...
 
 const ProductDetail = () => {
   const router = useRouter();
@@ -76,24 +75,61 @@ const ProductDetail = () => {
   }
 
   return (
-    <Box className="flex flex-col md:flex-row gap-6 w-full max-w-5xl p-3 md:p-4 bg-white rounded-lg shadow-md mx-auto max-h-full overflow-hidden mt-6">
+    <Box
+      className="flex flex-col md:flex-row gap-8 w-full max-w-4xl p-4 md:p-6 mx-auto overflow-hidden mt-8 shadow-2xl rounded-3xl border border-green-100 bg-gradient-to-br from-white/90 via-green-50 to-green-100"
+    >
       {/* Image Section */}
-      <Box className="md:w-1/2 relative h-48 md:h-[300px] bg-gray-100 rounded-md overflow-hidden flex items-center justify-center">
+      <Box
+        className="md:w-[45%] relative h-56 md:h-[320px] rounded-2xl overflow-hidden flex items-center justify-center shadow-lg bg-gradient-to-br from-green-50 via-white to-green-100"
+        sx={{
+          border: "1.5px solid #bbf7d0",
+        }}
+      >
         <Image
           src={product.image || noProductImage}
           alt={product.name}
           fill
-          className="object-cover object-center hover:scale-105 transition-transform duration-300"
+          className="object-contain object-center hover:scale-105 transition-transform duration-300 bg-white rounded-xl"
           priority
           unoptimized
+          style={{
+            padding: "18px",
+          }}
         />
+        {/* Out of Stock Ribbon */}
+        {product.quantity === 0 && (
+          <Box
+            sx={{
+              position: "absolute",
+              top: 18,
+              right: -40,
+              bgcolor: "error.main",
+              color: "#fff",
+              transform: "rotate(30deg)",
+              px: 7,
+              py: 0.5,
+              fontWeight: 700,
+              fontSize: 13,
+              boxShadow: 2,
+              zIndex: 2,
+              letterSpacing: 1,
+            }}
+          >
+            Out of Stock
+          </Box>
+        )}
       </Box>
 
       {/* Info Section */}
-      <Box className="md:w-1/2 overflow-y-auto pr-1 space-y-4">
+      <Box className="md:w-[55%] flex flex-col overflow-y-auto pr-1 space-y-4">
         <Typography
           variant="h4"
-          className="text-xl font-semibold text-gray-800"
+          className="font-bold text-green-900"
+          sx={{
+            fontSize: { xs: "1.35rem", md: "1.7rem" },
+            letterSpacing: "0.5px",
+            mb: 1,
+          }}
         >
           {product.name}
         </Typography>
@@ -102,55 +138,84 @@ const ProductDetail = () => {
           <Chip
             label={`Brand: ${product.brand}`}
             size="small"
-            className="bg-blue-100 text-blue-800"
+            className="shadow bg-green-700 text-white"
+            sx={{
+              fontWeight: 600,
+              fontSize: 13,
+              bgcolor: "green.700",
+              color: "#166534",
+              letterSpacing: 0.5,
+            }}
           />
           <Chip
-            label={`Category: ${product.category}`}
+            label={product.category}
             size="small"
-            className="bg-green-100 text-green-800"
+            className="shadow bg-green-200 text-green-900"
+            sx={{
+              fontWeight: 600,
+              fontSize: 13,
+              bgcolor: "green.200",
+              color: "#166534",
+              letterSpacing: 0.5,
+            }}
           />
         </Box>
 
-        <Divider className="my-2" />
+        <Divider className="my-2" sx={{ borderColor: "#bbf7d0" }} />
 
-        <Box className="space-y-3">
-          <Typography variant="h5" className="text-lg text-red-600 font-bold">
-            ${product.price}
+        <Typography
+          variant="h5"
+          className="text-green-700 font-extrabold"
+          sx={{
+            fontSize: { xs: "1.3rem", md: "1.6rem" },
+            fontWeight: 800,
+            color: "#059669",
+            mb: 1,
+            letterSpacing: "0.5px",
+          }}
+        >
+          ${product.price}
+        </Typography>
+
+        <Box className="flex items-center gap-3 flex-wrap">
+          <Typography className="text-sm font-medium text-gray-800">
+            Availability:
+            <span
+              className={`ml-2 font-semibold ${
+                product.quantity > 0 ? "text-green-600" : "text-red-600"
+              }`}
+            >
+              {product.quantity > 0
+                ? `${product.quantity} in stock`
+                : "Out of stock"}
+            </span>
           </Typography>
-
-          <Box className="flex items-center gap-2 flex-wrap">
-            <Typography className="text-sm">
-              Availability:
-              <span
-                className={`ml-2 font-medium ${
-                  product.quantity > 0 ? "text-green-600" : "text-red-600"
-                }`}
-              >
-                {product.quantity > 0
-                  ? `${product.quantity} in stock`
-                  : "Out of stock"}
-              </span>
-            </Typography>
-            {product.freeShipping && (
-              <Chip
-                label="Free Shipping"
-                className="bg-orange-100 text-orange-800"
-                size="small"
-              />
-            )}
-          </Box>
+          {product.freeShipping && (
+            <Chip
+              label="Free Shipping"
+              className="bg-orange-100 text-orange-800 font-bold"
+              size="small"
+              sx={{
+                bgcolor: "#fbbf24",
+                color: "#fff",
+                fontWeight: 700,
+                fontSize: 12,
+              }}
+            />
+          )}
         </Box>
 
-        <Divider className="my-2" />
+        <Divider className="my-2" sx={{ borderColor: "#bbf7d0" }} />
 
         <Box>
           <Typography
             variant="h6"
-            className="text-base font-semibold text-gray-700 mb-2"
+            className="font-semibold text-green-800 mb-2"
+            sx={{ fontSize: "1.08rem" }}
           >
             Description
           </Typography>
-          <Box className="text-gray-600 leading-relaxed text-sm text-justify break-words max-h-[120px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 hover:scrollbar-thumb-gray-400">
+          <Box className="text-gray-700 leading-relaxed text-[0.99rem] text-justify break-words max-h-[120px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-green-200 scrollbar-track-green-50 hover:scrollbar-thumb-green-400">
             {product.description}
           </Box>
         </Box>
@@ -158,12 +223,18 @@ const ProductDetail = () => {
         {role === "seller" && (
           <Box className="flex gap-3 mt-4 justify-center md:justify-start">
             <Button
-              fullWidth
+            fullWidth
               variant="contained"
               color="secondary"
               startIcon={<EditIcon />}
-              className="md:w-auto px-6 py-1.5 text-sm"
+              className="md:w-auto px-6 py-1.5 text-sm rounded-full shadow"
               onClick={() => router.push(`/edit-product/${productId}`)}
+              sx={{
+                fontWeight: 700,
+                textTransform: "none",
+                bgcolor: "#334155",
+                "&:hover": { bgcolor: "#1e293b" },
+              }}
             >
               Edit
             </Button>
@@ -174,20 +245,24 @@ const ProductDetail = () => {
         {role === "buyer" && (
           <Box className="flex flex-col gap-3 justify-center">
             <Box className="flex items-center space-x-3">
-              <Typography variant="h6" className="text-sm">
+              <Typography variant="h6" className="text-sm font-semibold">
                 Quantity:
               </Typography>
-
-              <Box className="flex items-center space-x-2 px-2 py-1">
+              <Box className="flex items-center space-x-2 px-2 py-1 bg-green-50 rounded-xl shadow">
                 <IconButton
                   color="secondary"
                   size="small"
                   disabled={count === 1}
                   onClick={() => setCount(count - 1)}
+                  sx={{
+                    bgcolor: "#e4e4e7",
+                    "&:hover": { bgcolor: "#d1d5db" },
+                    borderRadius: "999px",
+                    p: 0.8,
+                  }}
                 >
                   <Remove fontSize="small" />
                 </IconButton>
-
                 <Box className="w-14">
                   <TextField
                     variant="outlined"
@@ -214,15 +289,30 @@ const ProductDetail = () => {
                         margin: 0,
                       },
                       "& input[type=number]": { MozAppearance: "textfield" },
+                      "& .MuiInputBase-input": {
+                        textAlign: "center",
+                        fontWeight: 600,
+                        fontSize: "1rem",
+                        px: 0,
+                        py: 0.5,
+                        borderRadius: "8px",
+                        color: "#166534",
+                        background: "#fff",
+                      },
                     }}
                   />
                 </Box>
-
                 <IconButton
                   color="secondary"
                   size="small"
                   disabled={count === product.quantity}
                   onClick={() => setCount(count + 1)}
+                  sx={{
+                    bgcolor: "#e4e4e7",
+                    "&:hover": { bgcolor: "#d1d5db" },
+                    borderRadius: "999px",
+                    p: 0.8,
+                  }}
                 >
                   <AddSharp fontSize="small" />
                 </IconButton>

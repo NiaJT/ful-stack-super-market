@@ -14,7 +14,7 @@ const BuyerCardContainer = (props: { userRole: string }) => {
     queryFn: async () => {
       return await axiosInstance.post("/product/buyer/list", {
         page: currentPage,
-        limit: 5,
+        limit: 10,
       });
     },
     enabled: props.userRole === "buyer",
