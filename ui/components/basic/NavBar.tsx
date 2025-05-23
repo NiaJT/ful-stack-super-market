@@ -37,6 +37,7 @@ const NavBar = () => {
       const response = await axiosInstance.get("/cart/item/count");
       return response.data.cartCount;
     },
+    enabled: role === "buyer",
   });
 
   const navLinks = [

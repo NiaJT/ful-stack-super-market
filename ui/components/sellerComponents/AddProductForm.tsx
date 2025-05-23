@@ -22,6 +22,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 import { Formik } from "formik";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -39,6 +40,7 @@ export interface IAddProductForm {
 const AddProductForm = () => {
   const router = useRouter();
   const [localUrl, setLocalUrl] = useState<string | null>(null);
+  const [image, setImage] = useState<File | null>(null);
   const { isPending, mutate } = useMutation({
     mutationKey: ["add-product"],
     mutationFn: async (values: IAddProductForm) => {
@@ -52,6 +54,26 @@ const AddProductForm = () => {
       toast.error(error.response.data.message);
     },
   });
+  const handleImageUploadToCloudinary = async (image: File) => {
+    try {
+      const uploadPreset = "nextjs-emart";
+      const cloudName = "ddw2isstw";
+
+      const formData = new FormData();
+
+      formData.append("file", image);
+      formData.append("upload_preset", uploadPreset);
+      const response = await axios.post(
+        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+        formData
+      );
+      console.log("Cloudinary Full Response:", response);
+      return response;
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      toast.error("Error uploading image");
+    }
+  };
   return (
     <Box>
       {isPending && <LinearProgress />}
@@ -66,11 +88,18 @@ const AddProductForm = () => {
           description: "",
         }}
         validationSchema={productSchema}
-        onSubmit={(values: IAddProductForm) => {
+        onSubmit={async (values: IAddProductForm) => {
+          let imageUrl = "";
+          if (image) {
+            const response = await handleImageUploadToCloudinary(image);
+            imageUrl = response ? response.data.secure_url : "";
+            console.log("Image URL:", imageUrl);
+          }
           mutate({
             ...values,
             freeShipping: Boolean(values.freeShipping),
-          });
+            image: imageUrl,
+          } as IAddProductForm);
         }}
       >
         {(formik) => {
@@ -87,7 +116,7 @@ const AddProductForm = () => {
                     alt="Product Image"
                     fill
                     style={{
-                      objectFit: "cover",
+                      objectFit: "contain",
                     }}
                   />
                 </Box>
@@ -101,6 +130,7 @@ const AddProductForm = () => {
                   const image = event.target.files[0];
                   const Url = URL.createObjectURL(image);
                   setLocalUrl(Url);
+                  setImage(image);
                 }}
               ></input>
               <FormControl fullWidth>

@@ -21,6 +21,7 @@ import { AddSharp, Remove } from "@mui/icons-material";
 import FlushCart from "./FlushCart";
 import RemoveCartItem from "./RemoveCartItem";
 import { useRouter } from "next/navigation";
+import { noProductImage } from "@/constants/noproductImage";
 interface ICartItem {
   _id: string;
   orderedQuantity: number;
@@ -31,6 +32,7 @@ interface ICartItem {
     quantity: number;
     category: string;
     totalQuantity: number;
+    image?: string;
   };
 }
 
@@ -124,11 +126,12 @@ const CartItems = () => {
                   <TableCell align="center">{index + 1}</TableCell>
                   <TableCell align="center">
                     <Image
-                      src="/mouseImage.jpg"
+                      src={item.product.image || noProductImage}
                       width={80}
                       height={80}
                       alt="Product"
                       className="rounded shadow object-contain"
+                      unoptimized
                     />
                   </TableCell>
                   <TableCell align="center">

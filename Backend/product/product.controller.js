@@ -51,7 +51,8 @@ router.post(
           brand: 1,
           price: 1,
           quantity: 1,
-          shortDescription: { $substr: ["$description", 0, 200] },
+          image: 1,
+          shortDescription: { $substr: ["$description", 0, 150] },
         },
       },
     ]);
@@ -85,7 +86,8 @@ router.post(
           brand: 1,
           price: 1,
           quantity: 1,
-          shortDescription: { $substr: ["$description", 0, 200] },
+          image: 1,
+          shortDescription: { $substr: ["$description", 0, 150] },
         },
       },
     ]);

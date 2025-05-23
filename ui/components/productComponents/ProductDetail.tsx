@@ -21,6 +21,7 @@ import toast from "react-hot-toast";
 import AddtoCart from "../cartComponents/AddtoCart";
 import BuyButton from "../buyerComponents/BuyButton";
 import getUserRole from "../../utilities/get.user.role";
+import { noProductImage } from "@/constants/noproductImage";
 
 interface IProductDetail {
   name: string;
@@ -30,78 +31,95 @@ interface IProductDetail {
   category: string;
   freeShipping: boolean;
   description: string;
+  image?: string;
 }
+// Unchanged imports...
+
 const ProductDetail = () => {
   const router = useRouter();
   const params = useParams();
   const productId = params.id as string;
   const [role, setRole] = useState("");
   const [count, setCount] = useState(1);
+
   useEffect(() => {
     const userRole = getUserRole() as string;
     setRole(userRole);
   }, []);
-  console.log(role);
-  
+
   const { isPending, data, error } = useQuery({
     queryKey: ["get-product-detail"],
     queryFn: async () => {
       return await axiosInstance.get(`/product/detail/${productId}`);
     },
   });
+
   useEffect(() => {
     if (error) {
       const err = error as IError;
       toast.error(err.response?.data?.message || "Something went wrong.");
     }
   }, [error]);
+
   const product: IProductDetail = data?.data?.productDetails;
 
   if (isPending) {
-    return <CircularProgress />;
+    return (
+      <Box className="flex items-center justify-center h-full">
+        <CircularProgress />
+      </Box>
+    );
   }
 
-  if (error) {
+  if (error || !product) {
     return null;
   }
 
   return (
-    <Box className="flex flex-col md:flex-row gap-8 w-full max-w-6xl p-6 bg-white rounded-xl shadow-lg m-8">
-      <Box className="md:w-1/2 relative h-96 bg-gray-100 rounded-xl overflow-hidden flex items-center justify-center">
+    <Box className="flex flex-col md:flex-row gap-6 w-full max-w-5xl p-3 md:p-4 bg-white rounded-lg shadow-md mx-auto max-h-full overflow-hidden mt-6">
+      {/* Image Section */}
+      <Box className="md:w-1/2 relative h-48 md:h-[300px] bg-gray-100 rounded-md overflow-hidden flex items-center justify-center">
         <Image
-          src="/mouseImage.jpg"
+          src={product.image || noProductImage}
           alt={product.name}
           fill
-          className="object-contain object-center hover:scale-105 transition-transform duration-300"
+          className="object-cover object-center hover:scale-105 transition-transform duration-300"
           priority
+          unoptimized
         />
       </Box>
 
-      <Box className="md:w-1/2 space-y-6">
-        <Typography variant="h4" className="text-3xl font-bold text-gray-800">
+      {/* Info Section */}
+      <Box className="md:w-1/2 overflow-y-auto pr-1 space-y-4">
+        <Typography
+          variant="h4"
+          className="text-xl font-semibold text-gray-800"
+        >
           {product.name}
         </Typography>
 
         <Box className="flex gap-2 flex-wrap">
           <Chip
             label={`Brand: ${product.brand}`}
+            size="small"
             className="bg-blue-100 text-blue-800"
           />
           <Chip
             label={`Category: ${product.category}`}
+            size="small"
             className="bg-green-100 text-green-800"
           />
         </Box>
 
-        <Divider className="my-4" />
+        <Divider className="my-2" />
 
-        <Box className="space-y-4">
-          <Typography variant="h5" className="text-2xl text-red-600 font-bold">
+        <Box className="space-y-3">
+          <Typography variant="h5" className="text-lg text-red-600 font-bold">
             ${product.price}
           </Typography>
 
           <Box className="flex items-center gap-2 flex-wrap">
-            <Typography className="text-base">
+            <Typography className="text-sm">
               Availability:
               <span
                 className={`ml-2 font-medium ${
@@ -113,58 +131,54 @@ const ProductDetail = () => {
                   : "Out of stock"}
               </span>
             </Typography>
-            {product.freeShipping === true && (
+            {product.freeShipping && (
               <Chip
                 label="Free Shipping"
-                className="bg-orange-100 text-orange-800 ml-2"
+                className="bg-orange-100 text-orange-800"
                 size="small"
               />
             )}
           </Box>
         </Box>
 
-        <Divider className="my-4" />
+        <Divider className="my-2" />
 
-        <Box className="mb-6">
+        <Box>
           <Typography
             variant="h6"
-            className="text-lg font-semibold text-gray-700 mb-3"
+            className="text-base font-semibold text-gray-700 mb-2"
           >
-            Product Description
+            Description
           </Typography>
-          <Box
-            className="text-gray-600 leading-relaxed text-base text-justify break-words 
-              max-h-[200px] overflow-y-auto pr-4 scrollbar-thin scrollbar-thumb-gray-300 
-              scrollbar-track-gray-100 hover:scrollbar-thumb-gray-400"
-          >
+          <Box className="text-gray-600 leading-relaxed text-sm text-justify break-words max-h-[120px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 hover:scrollbar-thumb-gray-400">
             {product.description}
           </Box>
         </Box>
+
         {role === "seller" && (
-          <Box className="flex gap-4 mt-8 justify-center md:justify-start">
+          <Box className="flex gap-3 mt-4 justify-center md:justify-start">
             <Button
               fullWidth
               variant="contained"
               color="secondary"
               startIcon={<EditIcon />}
-              className="md:w-auto px-8 py-2"
-              onClick={() => {
-                router.push(`/edit-product/${productId}`);
-              }}
+              className="md:w-auto px-6 py-1.5 text-sm"
+              onClick={() => router.push(`/edit-product/${productId}`)}
             >
               Edit
             </Button>
             <DeleteProductDialog id={productId} />
           </Box>
         )}
-        {role == "buyer" && (
-          <Box className="flex flex-col gap-4 justify-center md:justify-center">
-            <Box className="flex items-center space-x-4">
-              <Typography variant="h6" className="min-w-max">
+
+        {role === "buyer" && (
+          <Box className="flex flex-col gap-3 justify-center">
+            <Box className="flex items-center space-x-3">
+              <Typography variant="h6" className="text-sm">
                 Quantity:
               </Typography>
 
-              <Box className="flex items-center space-x-2 px-3 py-1">
+              <Box className="flex items-center space-x-2 px-2 py-1">
                 <IconButton
                   color="secondary"
                   size="small"
@@ -174,7 +188,7 @@ const ProductDetail = () => {
                   <Remove fontSize="small" />
                 </IconButton>
 
-                <Box className="w-16">
+                <Box className="w-14">
                   <TextField
                     variant="outlined"
                     size="small"
@@ -191,7 +205,6 @@ const ProductDetail = () => {
                       }
                     }}
                     sx={{
-                      // Hide arrows on number inputs (Chrome, Safari, Edge, Opera)
                       "& input[type=number]::-webkit-inner-spin-button": {
                         WebkitAppearance: "none",
                         margin: 0,
@@ -200,10 +213,7 @@ const ProductDetail = () => {
                         WebkitAppearance: "none",
                         margin: 0,
                       },
-                      // Hide arrows on Firefox
-                      "& input[type=number]": {
-                        MozAppearance: "textfield",
-                      },
+                      "& input[type=number]": { MozAppearance: "textfield" },
                     }}
                   />
                 </Box>
@@ -211,14 +221,15 @@ const ProductDetail = () => {
                 <IconButton
                   color="secondary"
                   size="small"
-                  disabled={count == product.quantity}
+                  disabled={count === product.quantity}
                   onClick={() => setCount(count + 1)}
                 >
                   <AddSharp fontSize="small" />
                 </IconButton>
               </Box>
             </Box>
-            <Box className="flex gap-4 mt-4 justify-center md:justify-center">
+
+            <Box className="flex gap-3 mt-2 justify-center">
               <AddtoCart productId={productId} quantity={count} />
               <BuyButton />
             </Box>

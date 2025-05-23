@@ -93,6 +93,7 @@ router.get("/cart/list", isBuyer, async (req, res) => {
           category: { $first: "$productDetail.category" },
           brand: { $first: "$productDetail.brand" },
           totalQuantity: { $first: "$productDetail.quantity" },
+          image:{$first:"$productDetail.image"},
         },
       },
     },

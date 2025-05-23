@@ -2,6 +2,7 @@ import { Box, Typography, Button } from "@mui/material";
 import Image from "next/image";
 import { IProductCard } from "../sellerComponents/SellerCardContainer";
 import { useRouter } from "next/navigation";
+import { noProductImage } from "@/constants/noproductImage";
 
 const ProductCard = (props: IProductCard) => {
   const router = useRouter();
@@ -15,11 +16,12 @@ const ProductCard = (props: IProductCard) => {
           onClick={() => {
             router.push(`/product-detail/${props._id}`);
           }}
-          src="/mouseImage.jpg"
-          alt="Wireless Mouse"
-          fill
-          className="object-contain transition-transform duration-500 hover:scale-105"
-          sizes="(max-width: 400px) 100vw, 50vw"
+          src={props.image || noProductImage}
+          alt={props.name}
+          fill // ✅ Makes image fill the parent container
+          unoptimized // ✅ Avoids Next.js image optimization issues with Cloudinary
+          sizes="100vw"
+          className="object-cover" // or object-contain, based on your need
           priority
         />
       </Box>
