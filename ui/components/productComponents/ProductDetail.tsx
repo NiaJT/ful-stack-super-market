@@ -1,27 +1,29 @@
 "use client";
 import { AddSharp, Remove } from "@mui/icons-material";
-import { IconButton, TextField } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import { IError } from "@/interface/error.interface";
 import {
-  Box,
-  Button,
-  Typography,
+  IconButton,
+  TextField,
   Chip,
   Divider,
+  Button,
   CircularProgress,
+  Typography,
+  Box,
 } from "@mui/material";
 import Image from "next/image";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteProductDialog from "../basic/DeleteProductDialog";
-import { useQuery } from "@tanstack/react-query";
+import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { axiosInstance } from "@/lib/axios.instance";
+import { useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
+
+import { IError } from "@/interface/error.interface";
+import { axiosInstance } from "@/lib/axios.instance";
 import AddtoCart from "../cartComponents/AddtoCart";
 import BuyButton from "../buyerComponents/BuyButton";
+import DeleteProductDialog from "../basic/DeleteProductDialog";
 import getUserRole from "../../utilities/get.user.role";
 import { noProductImage } from "@/constants/noproductImage";
+import EditIcon from "@mui/icons-material/Edit";
 
 interface IProductDetail {
   name: string;
@@ -37,20 +39,17 @@ interface IProductDetail {
 const ProductDetail = () => {
   const router = useRouter();
   const params = useParams();
-  const productId = params.id as string;
   const [role, setRole] = useState("");
   const [count, setCount] = useState(1);
 
   useEffect(() => {
-    const userRole = getUserRole() as string;
-    setRole(userRole);
+    setRole(getUserRole() || "");
   }, []);
 
-  const { isPending, data, error } = useQuery({
+  const { data, isPending, error } = useQuery({
     queryKey: ["get-product-detail"],
-    queryFn: async () => {
-      return await axiosInstance.get(`/product/detail/${productId}`);
-    },
+    queryFn: async () =>
+      await axiosInstance.get(`/product/detail/${params.id}`),
   });
 
   useEffect(() => {
@@ -64,72 +63,38 @@ const ProductDetail = () => {
 
   if (isPending) {
     return (
-      <Box className="flex items-center justify-center h-full">
+      <Box className="flex items-center justify-center h-full min-h-[400px]">
         <CircularProgress />
       </Box>
     );
   }
 
-  if (error || !product) {
-    return null;
-  }
+  if (!product) return null;
 
   return (
-    <Box
-      className="flex flex-col md:flex-row gap-8 w-full max-w-4xl p-4 md:p-6 mx-auto overflow-hidden mt-8 shadow-2xl rounded-3xl border border-green-100 bg-gradient-to-br from-white/90 via-green-50 to-green-100"
-    >
+    <Box className="flex flex-col md:flex-row gap-8 w-full max-w-4xl p-4 md:p-6 mx-auto mt-8 shadow-2xl rounded-3xl border border-green-100 bg-gradient-to-br from-white/90 via-green-50 to-green-100 overflow-hidden">
       {/* Image Section */}
-      <Box
-        className="md:w-[45%] relative h-56 md:h-[320px] rounded-2xl overflow-hidden flex items-center justify-center shadow-lg bg-gradient-to-br from-green-50 via-white to-green-100"
-        sx={{
-          border: "1.5px solid #bbf7d0",
-        }}
-      >
+      <Box className="md:w-[45%] relative h-56 md:h-[320px] rounded-2xl overflow-hidden flex items-center justify-center shadow-lg border border-green-200 bg-white">
         <Image
           src={product.image || noProductImage}
           alt={product.name}
           fill
-          className="object-contain object-center hover:scale-105 transition-transform duration-300 bg-white rounded-xl"
-          priority
           unoptimized
-          style={{
-            padding: "18px",
-          }}
+          priority
+          className="object-contain p-4 rounded-xl transition-transform hover:scale-105"
         />
-        {/* Out of Stock Ribbon */}
         {product.quantity === 0 && (
-          <Box
-            sx={{
-              position: "absolute",
-              top: 18,
-              right: -40,
-              bgcolor: "error.main",
-              color: "#fff",
-              transform: "rotate(30deg)",
-              px: 7,
-              py: 0.5,
-              fontWeight: 700,
-              fontSize: 13,
-              boxShadow: 2,
-              zIndex: 2,
-              letterSpacing: 1,
-            }}
-          >
+          <Box className="absolute top-4 right-[-36px] rotate-30 px-6 py-0.5 bg-red-600 text-white text-[12px] font-bold shadow-md z-10 tracking-wider">
             Out of Stock
           </Box>
         )}
       </Box>
 
       {/* Info Section */}
-      <Box className="md:w-[55%] flex flex-col overflow-y-auto pr-1 space-y-4">
+      <Box className="md:w-[55%] flex flex-col space-y-4">
         <Typography
           variant="h4"
-          className="font-bold text-green-900"
-          sx={{
-            fontSize: { xs: "1.35rem", md: "1.7rem" },
-            letterSpacing: "0.5px",
-            mb: 1,
-          }}
+          className="font-bold text-green-900 text-[1.7rem]"
         >
           {product.name}
         </Typography>
@@ -138,42 +103,18 @@ const ProductDetail = () => {
           <Chip
             label={`Brand: ${product.brand}`}
             size="small"
-            className="shadow bg-green-700 text-white"
-            sx={{
-              fontWeight: 600,
-              fontSize: 13,
-              bgcolor: "green.700",
-              color: "#166534",
-              letterSpacing: 0.5,
-            }}
+            className="bg-green-700 text-white text-sm font-semibold shadow"
           />
           <Chip
             label={product.category}
             size="small"
-            className="shadow bg-green-200 text-green-900"
-            sx={{
-              fontWeight: 600,
-              fontSize: 13,
-              bgcolor: "green.200",
-              color: "#166534",
-              letterSpacing: 0.5,
-            }}
+            className="bg-green-200 text-green-900 text-sm font-semibold shadow"
           />
         </Box>
 
-        <Divider className="my-2" sx={{ borderColor: "#bbf7d0" }} />
+        <Divider className="border-green-200" />
 
-        <Typography
-          variant="h5"
-          className="text-green-700 font-extrabold"
-          sx={{
-            fontSize: { xs: "1.3rem", md: "1.6rem" },
-            fontWeight: 800,
-            color: "#059669",
-            mb: 1,
-            letterSpacing: "0.5px",
-          }}
-        >
+        <Typography className="text-green-700 font-extrabold text-[1.6rem]">
           ${product.price}
         </Typography>
 
@@ -193,76 +134,57 @@ const ProductDetail = () => {
           {product.freeShipping && (
             <Chip
               label="Free Shipping"
-              className="bg-orange-100 text-orange-800 font-bold"
               size="small"
-              sx={{
-                bgcolor: "#fbbf24",
-                color: "#fff",
-                fontWeight: 700,
-                fontSize: 12,
-              }}
+              className="bg-orange-100 text-orange-800 font-bold shadow"
             />
           )}
         </Box>
 
-        <Divider className="my-2" sx={{ borderColor: "#bbf7d0" }} />
+        <Divider className="border-green-200" />
 
         <Box>
-          <Typography
-            variant="h6"
-            className="font-semibold text-green-800 mb-2"
-            sx={{ fontSize: "1.08rem" }}
-          >
+          <Typography className="font-semibold text-green-800 text-[1.05rem] mb-2">
             Description
           </Typography>
-          <Box className="text-gray-700 leading-relaxed text-[0.99rem] text-justify break-words max-h-[120px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-green-200 scrollbar-track-green-50 hover:scrollbar-thumb-green-400">
+          <Box className="text-gray-700 text-sm leading-relaxed text-justify break-words max-h-[120px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-green-200 hover:scrollbar-thumb-green-400">
             {product.description}
           </Box>
         </Box>
 
+        {/* Seller Actions */}
         {role === "seller" && (
-          <Box className="flex gap-3 mt-4 justify-center md:justify-start">
+          <Box className="flex gap-3 justify-center md:justify-start mt-4">
             <Button
             fullWidth
               variant="contained"
               color="secondary"
               startIcon={<EditIcon />}
-              className="md:w-auto px-6 py-1.5 text-sm rounded-full shadow"
-              onClick={() => router.push(`/edit-product/${productId}`)}
-              sx={{
-                fontWeight: 700,
-                textTransform: "none",
-                bgcolor: "#334155",
-                "&:hover": { bgcolor: "#1e293b" },
-              }}
+              onClick={() => router.push(`/edit-product/${params.id}`)}
+              className="bg-slate-800 hover:bg-slate-900 px-6 py-1.5 text-sm rounded-full font-bold text-white shadow"
             >
               Edit
             </Button>
-            <DeleteProductDialog id={productId} />
+            <DeleteProductDialog id={params.id as string} />
           </Box>
         )}
 
+        {/* Buyer Actions */}
         {role === "buyer" && (
-          <Box className="flex flex-col gap-3 justify-center">
+          <Box className="flex flex-col gap-3">
             <Box className="flex items-center space-x-3">
               <Typography variant="h6" className="text-sm font-semibold">
                 Quantity:
               </Typography>
-              <Box className="flex items-center space-x-2 px-2 py-1 bg-green-50 rounded-xl shadow">
+               <Box className="flex items-center space-x-2 px-2 py-1">
                 <IconButton
                   color="secondary"
                   size="small"
                   disabled={count === 1}
                   onClick={() => setCount(count - 1)}
-                  sx={{
-                    bgcolor: "#e4e4e7",
-                    "&:hover": { bgcolor: "#d1d5db" },
-                    borderRadius: "999px",
-                    p: 0.8,
-                  }}
                 >
                   <Remove fontSize="small" />
                 </IconButton>
+
                 <Box className="w-14">
                   <TextField
                     variant="outlined"
@@ -289,38 +211,23 @@ const ProductDetail = () => {
                         margin: 0,
                       },
                       "& input[type=number]": { MozAppearance: "textfield" },
-                      "& .MuiInputBase-input": {
-                        textAlign: "center",
-                        fontWeight: 600,
-                        fontSize: "1rem",
-                        px: 0,
-                        py: 0.5,
-                        borderRadius: "8px",
-                        color: "#166534",
-                        background: "#fff",
-                      },
                     }}
                   />
                 </Box>
+
                 <IconButton
                   color="secondary"
                   size="small"
                   disabled={count === product.quantity}
                   onClick={() => setCount(count + 1)}
-                  sx={{
-                    bgcolor: "#e4e4e7",
-                    "&:hover": { bgcolor: "#d1d5db" },
-                    borderRadius: "999px",
-                    p: 0.8,
-                  }}
                 >
                   <AddSharp fontSize="small" />
                 </IconButton>
               </Box>
             </Box>
 
-            <Box className="flex gap-3 mt-2 justify-center">
-              <AddtoCart productId={productId} quantity={count} />
+            <Box className="flex gap-3 justify-center mt-2">
+              <AddtoCart productId={params.id as string} quantity={count} />
               <BuyButton />
             </Box>
           </Box>

@@ -75,7 +75,7 @@ const AddProductForm = () => {
     }
   };
   return (
-    <Box>
+    <Box className="mt-4">
       {isPending && <LinearProgress />}
       <Formik
         initialValues={{
