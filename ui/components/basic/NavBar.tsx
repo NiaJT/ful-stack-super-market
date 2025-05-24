@@ -22,6 +22,7 @@ import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { axiosInstance } from "@/lib/axios.instance";
 import { IError } from "@/interface/error.interface";
+import GreetUser from "./greetUser";
 
 const NavBar = () => {
   const router = useRouter();
@@ -81,6 +82,10 @@ const NavBar = () => {
         <Divider className="mb-4 bg-white/40" />
 
         <ul className="flex flex-col gap-3">
+          <li>
+            <GreetUser />
+          </li>
+
           {navLinks.map((item, idx) => (
             <li key={idx}>
               <Button
@@ -132,6 +137,8 @@ const NavBar = () => {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex gap-6 items-center">
+          <GreetUser />
+          <Divider orientation="vertical" className="h-6 bg-white/40" />
           {navLinks.map((item, idx) => (
             <Button
               key={idx}
