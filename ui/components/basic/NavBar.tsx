@@ -22,7 +22,7 @@ import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { axiosInstance } from "@/lib/axios.instance";
 import { IError } from "@/interface/error.interface";
-import GreetUser from "./greetUser";
+import GreetUser from "./GreetUser";
 
 const NavBar = () => {
   const router = useRouter();
