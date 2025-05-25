@@ -1,22 +1,23 @@
 "use client";
-import { Box, Button } from "@mui/material";
+import { Box, Fab, Tooltip } from "@mui/material";
 import { useRouter } from "next/navigation";
 import React from "react";
-import AddBoxIcon from "@mui/icons-material/AddBox";
+import AddIcon from "@mui/icons-material/Add";
+
 const AddProductButton: React.FC = () => {
   const router = useRouter();
+
   return (
-    <Box className="mt-8">
-      <Button
-        startIcon={<AddBoxIcon />}
-        variant="contained"
-        color="success"
-        onClick={() => {
-          router.push("/add-product");
-        }}
-      >
-        Add Product
-      </Button>
+    <Box className="flex right-8 bottom-8 fixed z-50">
+      <Tooltip title="Add Product" arrow placement="left">
+        <Fab
+          color="success"
+          aria-label="add"
+          onClick={() => router.push("/add-product")}
+        >
+          <AddIcon fontSize="large" />
+        </Fab>
+      </Tooltip>
     </Box>
   );
 };

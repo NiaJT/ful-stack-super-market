@@ -26,7 +26,32 @@ import { axiosInstance } from "@/lib/axios.instance";
 import { IError } from "@/interface/error.interface";
 import toast from "react-hot-toast";
 import { IAddProductForm } from "./AddProductForm";
+import Image from "next/image";
+import { useState } from "react";
+import axios from "axios";
 const EditProductForm = () => {
+  const [localUrl, setLocalUrl] = useState<string>("");
+  const [image, setImage] = useState<File | null>(null);
+  const handleImageUploadToCloudinary = async (image: File) => {
+    try {
+      const uploadPreset = "nextjs-emart";
+      const cloudName = "ddw2isstw";
+
+      const formData = new FormData();
+
+      formData.append("file", image);
+      formData.append("upload_preset", uploadPreset);
+      const response = await axios.post(
+        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+        formData
+      );
+      console.log("Cloudinary Full Response:", response);
+      return response.data.secure_url;
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      toast.error("Error uploading image");
+    }
+  };
   const router = useRouter();
   const params = useParams();
   const { isPending, data } = useQuery<IAddProductForm, IError>({
@@ -64,6 +89,7 @@ const EditProductForm = () => {
       <Formik
         enableReinitialize
         initialValues={{
+          image: data?.image || "",
           name: data?.name || "",
           brand: data?.brand || "",
           price: data?.price || 0,
@@ -73,10 +99,15 @@ const EditProductForm = () => {
           description: data?.description || "",
         }}
         validationSchema={productSchema}
-        onSubmit={(values: IAddProductForm) => {
+        onSubmit={async (values: IAddProductForm) => {
+          let url = "";
+          if (image) {
+            url = await handleImageUploadToCloudinary(image);
+          }
           const newValues = {
             ...values,
             freeShipping: values.freeShipping === "true",
+            image: url ? url : data?.image || "",
           };
           mutate(newValues);
         }}
@@ -89,6 +120,28 @@ const EditProductForm = () => {
             >
               {editPending && <LinearProgress />}
               <Typography variant="h5">Edit Product</Typography>
+              <Box className="relative h-[250px] w-full">
+                <Image
+                  src={localUrl || data?.image || ""}
+                  alt="Product Image"
+                  fill
+                  style={{
+                    objectFit: "contain",
+                  }}
+                />
+              </Box>
+              <input
+                type="file"
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  if (!event || !event.target || !event.target.files) {
+                    return;
+                  }
+                  const image = event.target.files[0];
+                  const Url = URL.createObjectURL(image);
+                  setLocalUrl(Url);
+                  setImage(image);
+                }}
+              />
               <FormControl fullWidth>
                 <TextField
                   label="Name"

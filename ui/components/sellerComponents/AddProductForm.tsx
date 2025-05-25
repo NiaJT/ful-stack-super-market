@@ -36,6 +36,7 @@ export interface IAddProductForm {
   category: string;
   freeShipping: boolean | string;
   description: string;
+  image?: string;
 }
 const AddProductForm = () => {
   const router = useRouter();
