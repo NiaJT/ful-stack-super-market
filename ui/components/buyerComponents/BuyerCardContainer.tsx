@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import ProductCard from "../productComponents/ProductCard";
+import CategoryContainer from "./CategoryContainer";
 
 const BuyerCardContainer = (props: { userRole: string }) => {
   const [currentPage, setPage] = useState(1);
@@ -32,21 +33,24 @@ const BuyerCardContainer = (props: { userRole: string }) => {
   }
 
   return (
-    <Box className="flex flex-col justify-center items-center m-8 gap-4 ">
-      <Box className="flex flex-wrap justify-center items-center m-8 gap-4">
-        {productList.map((item) => {
-          return <ProductCard key={item._id} {...item} />;
-        })}
+    <>
+      <CategoryContainer />
+      <Box className="flex flex-col justify-center items-center m-8 gap-4 ">
+        <Box className="flex flex-wrap justify-center items-center m-8 gap-4">
+          {productList.map((item) => {
+            return <ProductCard key={item._id} {...item} />;
+          })}
+        </Box>
+        <Pagination
+          page={currentPage}
+          count={totalPages}
+          color="secondary"
+          onChange={(_, value: number) => {
+            setPage(value);
+          }}
+        />
       </Box>
-      <Pagination
-        page={currentPage}
-        count={totalPages}
-        color="secondary"
-        onChange={(_, value: number) => {
-          setPage(value);
-        }}
-      />
-    </Box>
+    </>
   );
 };
 

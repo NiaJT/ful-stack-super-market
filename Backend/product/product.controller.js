@@ -131,6 +131,43 @@ router.delete(
     return res.status(200).send({ message: "Deleted product Successfully" });
   }
 );
+router.post(
+  "/product/buyer/category-list/:category",
+  isBuyer,
+  validateReqbody(paginationSchema),
+  async (req, res, next) => {
+    const page = req.body.page;
+    const limit = req.body.limit;
+    const skip = (page - 1) * limit;
+    const totalItems = await productTable
+      .find({ category: req.params.category })
+      .countDocuments();
+    const totalPages = Math.ceil(totalItems / limit);
+    const products = await productTable.aggregate([
+      { $match: { category: req.params.category } },
+      { $skip: skip },
+      { $limit: limit },
+      {
+        $project: {
+          seller_id: 1,
+          _id: 1,
+          name: 1,
+          brand: 1,
+          price: 1,
+          quantity: 1,
+          category: 1,
+          image: 1,
+          shortDescription: { $substr: ["$description", 0, 150] },
+        },
+      },
+    ]);
+    res.status(200).send({
+      message: "product list",
+      productList: products,
+      totalPages: totalPages,
+    });
+  }
+);
 router.put(
   "/product/edit/:id",
   isSeller,
