@@ -13,7 +13,7 @@ const category = [
   { name: "Electrical", image: "/categoryImages/electrical.jpg" },
 ];
 
-const CategoryContainer = () => {
+const CategoryList = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -63,4 +63,4 @@ const CategoryContainer = () => {
   );
 };
 
-export default CategoryContainer;
+export default CategoryList;

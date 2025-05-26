@@ -1,24 +1,29 @@
 "use client";
-import { IProduct } from "@/interface/product.interface";
+import React, { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { axiosInstance } from "@/lib/axios.instance";
 import { Box, CircularProgress, Pagination } from "@mui/material";
-import { useQuery } from "@tanstack/react-query";
-import React, { useState } from "react";
-import toast from "react-hot-toast";
 import ProductCard from "../productComponents/ProductCard";
-import CategoryList from "./CategoryList";
-
-const BuyerCardContainer = (props: { userRole: string }) => {
+import toast from "react-hot-toast";
+import { IProduct } from "@/interface/product.interface";
+import getUserRole from "@/utilities/get.user.role";
+import { useParams } from "next/navigation";
+const CategoryCardContainer = () => {
+  const category = useParams().category;
+  console.log(category);
   const [currentPage, setPage] = useState(1);
   const { isPending, data, isError, error } = useQuery({
     queryKey: ["product-list-buyer", currentPage],
     queryFn: async () => {
-      return await axiosInstance.post("/product/buyer/list", {
-        page: currentPage,
-        limit: 10,
-      });
+      return await axiosInstance.post(
+        `/product/buyer/category-list/${category}`,
+        {
+          page: currentPage,
+          limit: 10,
+        }
+      );
     },
-    enabled: props.userRole === "buyer",
+    enabled: getUserRole() === "buyer",
   });
   const productList: IProduct[] = data?.data?.productList;
   console.log(productList);
@@ -34,7 +39,6 @@ const BuyerCardContainer = (props: { userRole: string }) => {
 
   return (
     <>
-      <CategoryList />
       <Box className="flex flex-col justify-center items-center m-8 gap-4 ">
         <Box className="flex flex-wrap justify-center items-center m-8 gap-4">
           {productList.map((item) => {
@@ -54,4 +58,4 @@ const BuyerCardContainer = (props: { userRole: string }) => {
   );
 };
 
-export default BuyerCardContainer;
+export default CategoryCardContainer;
