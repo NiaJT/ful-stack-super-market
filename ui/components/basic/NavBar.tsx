@@ -10,8 +10,6 @@ import {
   Badge,
   Avatar,
   Tooltip,
-  MenuItem,
-  Menu,
 } from "@mui/material";
 import {
   Menu as MenuIcon,
@@ -27,6 +25,7 @@ import { useQuery } from "@tanstack/react-query";
 import { axiosInstance } from "@/lib/axios.instance";
 import { IError } from "@/interface/error.interface";
 import GreetUser from "./GreetUser";
+import AccountSetting from "../Account/AccountSetting";
 
 const NavBar = () => {
   const router = useRouter();
@@ -40,7 +39,7 @@ const NavBar = () => {
     if (userRole) setRole(userRole);
     if (userName) setUserName(userName);
   }, []);
-  const initial = userName?.charAt(0)?.toUpperCase() || "U";
+
   const { data: cartCount = 0 } = useQuery<number, IError>({
     queryKey: ["get-cart-items-count"],
     queryFn: async () => {
@@ -72,16 +71,6 @@ const NavBar = () => {
   const logOut = () => {
     localStorage.clear();
     router.replace("/login");
-  };
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
   };
 
   const drawerContent = (
@@ -136,7 +125,7 @@ const NavBar = () => {
       <Box>
         <Box className="flex items-center gap-3 mb-3">
           <Avatar sx={{ bgcolor: "purple", width: 36, height: 36 }}>
-            {initial}
+            {userName[0]?.toUpperCase() || "U"}
           </Avatar>
           <Typography className="text-white font-semibold">
             {userName}
@@ -191,33 +180,7 @@ const NavBar = () => {
               </Button>
             </Tooltip>
           )}
-          <Box>
-            <Tooltip title="Account" placement="bottom" arrow>
-              <IconButton onClick={handleMenuOpen}>
-                <Avatar sx={{ bgcolor: "purple" }}>{initial}</Avatar>
-              </IconButton>
-            </Tooltip>
-            <Menu
-              anchorEl={anchorEl}
-              open={open}
-              onClose={handleMenuClose}
-              onClick={handleMenuClose}
-              anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-              transformOrigin={{ vertical: "top", horizontal: "right" }}
-              PaperProps={{
-                sx: {
-                  bgcolor: "green.700",
-                  color: "white",
-                  mt: 1,
-                },
-              }}
-            >
-              <MenuItem disabled>{userName}</MenuItem>
-              <MenuItem onClick={logOut}>
-                <LogoutIcon fontSize="small" className="mr-2" /> Log Out
-              </MenuItem>
-            </Menu>
-          </Box>
+          <AccountSetting userName={userName} />
         </nav>
 
         {/* Mobile Menu Icon */}
