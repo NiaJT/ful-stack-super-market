@@ -9,17 +9,19 @@ const GreetUser = () => {
 
   useEffect(() => {
     const storedName = localStorage.getItem("firstName");
-    if (storedName) setUserName(storedName);
+    if (storedName && typeof storedName === "string") {
+      setUserName(storedName);
+    }
   }, []);
 
   return (
-    <Box className="flex justify-center items-center">
+    <Box className="flex justify-center items-center gap-2">
       {doneTyping ? (
         <Box
           component="span"
           className="text-white font-semibold"
           sx={{
-            opacity: doneTyping ? 1 : 0,
+            opacity: 1,
             transition: "opacity 1s ease-in-out",
           }}
         >
@@ -28,6 +30,7 @@ const GreetUser = () => {
       ) : (
         <Box component="span" className="text-white font-semibold">
           <Typewriter
+            key={userName}
             options={{
               autoStart: true,
               loop: false,

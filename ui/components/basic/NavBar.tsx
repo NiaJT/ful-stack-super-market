@@ -8,6 +8,10 @@ import {
   Drawer,
   Divider,
   Badge,
+  Avatar,
+  Tooltip,
+  MenuItem,
+  Menu,
 } from "@mui/material";
 import {
   Menu as MenuIcon,
@@ -28,12 +32,15 @@ const NavBar = () => {
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [role, setRole] = useState("");
+  const [userName, setUserName] = useState("");
 
   useEffect(() => {
     const userRole = localStorage.getItem("role");
+    const userName = localStorage.getItem("firstName");
     if (userRole) setRole(userRole);
+    if (userName) setUserName(userName);
   }, []);
-
+  const initial = userName?.charAt(0)?.toUpperCase() || "U";
   const { data: cartCount = 0 } = useQuery<number, IError>({
     queryKey: ["get-cart-items-count"],
     queryFn: async () => {
@@ -65,6 +72,16 @@ const NavBar = () => {
   const logOut = () => {
     localStorage.clear();
     router.replace("/login");
+  };
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
   };
 
   const drawerContent = (
@@ -116,15 +133,24 @@ const NavBar = () => {
           )}
         </ul>
       </Box>
-
-      <Button
-        fullWidth
-        startIcon={<LogoutIcon className="text-white" />}
-        className="bg-green-600 text-white font-bold rounded-lg shadow hover:bg-green-700 normal-case"
-        onClick={logOut}
-      >
-        <Box className="text-white font-bold">Log Out</Box>
-      </Button>
+      <Box>
+        <Box className="flex items-center gap-3 mb-3">
+          <Avatar sx={{ bgcolor: "purple", width: 36, height: 36 }}>
+            {initial}
+          </Avatar>
+          <Typography className="text-white font-semibold">
+            {userName}
+          </Typography>
+        </Box>
+        <Button
+          fullWidth
+          startIcon={<LogoutIcon className="text-white" />}
+          className="bg-green-600 text-white font-bold rounded-lg shadow hover:bg-green-700 normal-case"
+          onClick={logOut}
+        >
+          <Box className="text-white font-bold">Log Out</Box>
+        </Button>
+      </Box>
     </Box>
   );
 
@@ -140,35 +166,58 @@ const NavBar = () => {
           <GreetUser />
           <Divider orientation="vertical" className="h-6 bg-white/40" />
           {navLinks.map((item, idx) => (
-            <Button
-              key={idx}
-              startIcon={item.icon}
-              className="text-white hover:bg-green-800 normal-case"
-              onClick={() => router.replace(item.link)}
-            >
-              <Box className="text-white">{item.name}</Box>
-            </Button>
+            <Tooltip key={idx} title={item.name} placement="bottom" arrow>
+              <Button
+                startIcon={item.icon}
+                className="text-white hover:bg-green-800 normal-case"
+                onClick={() => router.replace(item.link)}
+              >
+                <Box className="text-white">{item.name}</Box>
+              </Button>
+            </Tooltip>
           ))}
           {role === "buyer" && (
-            <Button
-              startIcon={
-                <Badge badgeContent={cartCount} color="secondary">
-                  <ShoppingCartIcon className="text-white" />
-                </Badge>
-              }
-              className="text-white hover:bg-green-800 normal-case"
-              onClick={() => router.push("/cart")}
-            >
-              <Box className="text-white">Cart</Box>
-            </Button>
+            <Tooltip title="Cart" placement="bottom" arrow>
+              <Button
+                startIcon={
+                  <Badge badgeContent={cartCount} color="secondary">
+                    <ShoppingCartIcon className="text-white" />
+                  </Badge>
+                }
+                className="text-white hover:bg-green-800 normal-case"
+                onClick={() => router.push("/cart")}
+              >
+                <Box className="text-white">Cart</Box>
+              </Button>
+            </Tooltip>
           )}
-          <Button
-            startIcon={<LogoutIcon className="text-white" />}
-            className="bg-green-600 text-white font-bold rounded-lg shadow hover:bg-green-700 normal-case"
-            onClick={logOut}
-          >
-            <Box className="text-white font-bold">Log Out</Box>
-          </Button>
+          <Box>
+            <Tooltip title="Account" placement="bottom" arrow>
+              <IconButton onClick={handleMenuOpen}>
+                <Avatar sx={{ bgcolor: "purple" }}>{initial}</Avatar>
+              </IconButton>
+            </Tooltip>
+            <Menu
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleMenuClose}
+              onClick={handleMenuClose}
+              anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+              transformOrigin={{ vertical: "top", horizontal: "right" }}
+              PaperProps={{
+                sx: {
+                  bgcolor: "green.700",
+                  color: "white",
+                  mt: 1,
+                },
+              }}
+            >
+              <MenuItem disabled>{userName}</MenuItem>
+              <MenuItem onClick={logOut}>
+                <LogoutIcon fontSize="small" className="mr-2" /> Log Out
+              </MenuItem>
+            </Menu>
+          </Box>
         </nav>
 
         {/* Mobile Menu Icon */}
