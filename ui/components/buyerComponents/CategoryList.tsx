@@ -27,11 +27,12 @@ const CategoryList = () => {
   useEffect(() => {
     if (scrollRef.current) {
       const child = scrollRef.current.children[currentIndex] as HTMLElement;
-      child?.scrollIntoView({
-        behavior: "smooth",
-        inline: "start",
-        block: "nearest",
-      });
+      if (child) {
+        scrollRef.current.scrollTo({
+          left: child.offsetLeft,
+          behavior: "smooth",
+        });
+      }
     }
   }, [currentIndex]);
 
