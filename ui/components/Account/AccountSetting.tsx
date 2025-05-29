@@ -35,7 +35,14 @@ const AccountSetting = (props: { userName: string }) => {
             aria-haspopup="true"
             aria-expanded={open ? "true" : undefined}
           >
-            <Avatar sx={{ width: 32, height: 32 }}>
+            <Avatar
+              sx={{
+                width: 32,
+                height: 32,
+                bgcolor: "secondary.main",
+                color: "white",
+              }}
+            >
               {props.userName[0]?.toUpperCase() || "U"}
             </Avatar>
           </IconButton>
