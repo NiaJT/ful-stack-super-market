@@ -16,7 +16,6 @@ const limiter = rateLimit({
 const app = express();
 const PORT = 8000;
 
-app.use(limiter);
 app.use(
   cors({
     origin: ["http://localhost:3000", "http://192.168.1.9:3000/"],
@@ -24,7 +23,7 @@ app.use(
 );
 await connectDB();
 app.use(express.json());
-app.use(userController);
+app.use(limiter, userController);
 app.use(productController);
 app.use(cartController);
 

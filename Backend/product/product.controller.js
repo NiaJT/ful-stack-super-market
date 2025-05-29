@@ -98,6 +98,42 @@ router.post(
     });
   }
 );
+router.post("/product/search", isUser, async (req, res) => {
+  try {
+    const keyword = req.body.search?.trim();
+    if (!keyword) {
+      return res.status(400).send({ message: "Search keyword is required" });
+    }
+
+    // Word-boundary match (starts a word): \bsa
+    const prefixRegex = new RegExp(`\\b${keyword}`, "i");
+    const looseRegex = new RegExp(keyword, "i");
+
+    // 1. Match prefix first
+    const prefixMatches = await productTable
+      .find({ name: { $regex: prefixRegex } })
+      .limit(10);
+
+    // 2. Then match all occurrences, excluding already found
+    const looseMatches = await productTable
+      .find({
+        name: { $regex: looseRegex },
+        _id: { $nin: prefixMatches.map((p) => p._id) },
+      })
+      .limit(10);
+
+    // Combine
+    const productList = [...prefixMatches, ...looseMatches];
+
+    return res.status(200).send({
+      message: "Search results",
+      productList,
+    });
+  } catch (error) {
+    return res.status(500).send({ message: "Internal Server Error", error });
+  }
+});
+
 //add product by seller
 router.post(
   "/product/add",

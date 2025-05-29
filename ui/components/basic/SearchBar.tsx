@@ -1,17 +1,23 @@
+"use client";
 import { Box } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import SearchSharpIcon from "@mui/icons-material/SearchSharp";
 import { axiosInstance } from "@/lib/axios.instance";
 
 const SearchBar = () => {
+  const [suggestions, setSuggesstions] = useState("");
   const [input, setInput] = useState("");
   useEffect(() => {
-    // if (input) {
-    //   const fetchProducts = async () => {
-    //     await axiosInstance.post("/product/list", { search: input });
-    //   };
-    //   fetchProducts();
-    // }
+    if (input) {
+      const fetchProducts = async () => {
+        const suggestionList = await axiosInstance.post("/product/search", {
+          search: input,
+        });
+        setSuggesstions(suggestionList.data);
+        console.log(suggestions);
+      };
+      fetchProducts();
+    }
   }, [input]);
 
   return (
