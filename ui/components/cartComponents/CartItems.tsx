@@ -1,9 +1,20 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import {
-  Table, TableBody, TableCell, TableContainer,
-  TableHead, TableRow, Paper, Box, Chip,
-  IconButton, TextField, Button, Typography, Divider
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Box,
+  Chip,
+  IconButton,
+  TextField,
+  Button,
+  Typography,
+  Divider,
 } from "@mui/material";
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
@@ -43,7 +54,7 @@ const CartItems = () => {
   useEffect(() => {
     if (data) {
       const initialCounts = Object.fromEntries(
-        data.map(item => [item._id, item.orderedQuantity || 1])
+        data.map((item) => [item._id, item.orderedQuantity || 1])
       );
       setCounts(initialCounts);
     }
@@ -51,7 +62,7 @@ const CartItems = () => {
 
   const handleCountChange = (id: string, value: number, max: number) => {
     const newValue = isNaN(value) ? 1 : Math.max(1, Math.min(value, max));
-    setCounts(prev => ({ ...prev, [id]: newValue }));
+    setCounts((prev) => ({ ...prev, [id]: newValue }));
   };
 
   if (isPending) return <CenteredText text="Loading your cart..." />;
@@ -59,7 +70,12 @@ const CartItems = () => {
   if (!data?.length)
     return (
       <Box className="flex flex-col items-center mt-16 w-full md:w-1/3 p-10 gap-6 rounded-xl bg-gradient-to-br from-green-50 to-green-200 shadow-lg">
-        <Typography variant="h5" className="font-semibold text-green-900 font-serif">Your cart is empty</Typography>
+        <Typography
+          variant="h5"
+          className="font-semibold text-green-900 font-serif"
+        >
+          Your cart is empty
+        </Typography>
         <Button
           color="success"
           variant="contained"
@@ -79,15 +95,32 @@ const CartItems = () => {
   return (
     <Box className="flex flex-col items-center w-full px-4 md:px-0 md:w-4/5 lg:w-2/3 my-14">
       <FlushCart />
-      <Typography variant="h4" className="font-bold text-green-900 font-serif mb-5">Shopping Cart</Typography>
+      <Typography
+        variant="h4"
+        className="font-bold text-green-900 font-serif mb-5"
+      >
+        Shopping Cart
+      </Typography>
 
-      <TableContainer component={Paper} elevation={3} className="rounded-2xl bg-gradient-to-br from-slate-50 to-green-200 shadow-md">
+      <TableContainer
+        component={Paper}
+        elevation={3}
+        className="rounded-2xl bg-gradient-to-br from-slate-50 to-green-200 shadow-md"
+      >
         <Table>
           <TableHead>
             <TableRow className="bg-green-50">
-              {["S.N.", "Image", "Name", "Quantity", "Amount", "Action"].map((head) => (
-                <TableCell align="center" key={head} className="text-green-800 font-bold text-lg font-serif border-b-2 border-green-200">{head}</TableCell>
-              ))}
+              {["S.N.", "Image", "Name", "Quantity", "Amount", "Action"].map(
+                (head) => (
+                  <TableCell
+                    align="center"
+                    key={head}
+                    className="text-green-800 font-bold text-lg font-serif border-b-2 border-green-200"
+                  >
+                    {head}
+                  </TableCell>
+                )
+              )}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -96,8 +129,16 @@ const CartItems = () => {
               const maxQty = item.product.totalQuantity;
 
               return (
-                <TableRow key={item._id} className={i % 2 === 0 ? "bg-green-50/60" : "bg-white/90"}>
-                  <TableCell align="center" className="font-semibold font-serif">{i + 1}</TableCell>
+                <TableRow
+                  key={item._id}
+                  className={i % 2 === 0 ? "bg-green-50/60" : "bg-white/90"}
+                >
+                  <TableCell
+                    align="center"
+                    className="font-semibold font-serif"
+                  >
+                    {i + 1}
+                  </TableCell>
                   <TableCell align="center">
                     <Image
                       src={item.product.image || noProductImage}
@@ -110,8 +151,14 @@ const CartItems = () => {
                   </TableCell>
                   <TableCell align="center">
                     <Box className="flex flex-col items-center">
-                      <Typography className="font-bold text-green-900 font-serif">{item.product.name}</Typography>
-                      <Chip label={item.product.brand} size="small" className="bg-slate-200 text-slate-900 font-serif font-bold mt-1" />
+                      <Typography className="font-bold text-green-900 font-serif">
+                        {item.product.name}
+                      </Typography>
+                      <Chip
+                        label={item.product.brand}
+                        size="small"
+                        className="bg-slate-200 text-slate-900 font-serif font-bold mt-1"
+                      />
                     </Box>
                   </TableCell>
                   <TableCell align="center">
@@ -119,7 +166,9 @@ const CartItems = () => {
                       <IconButton
                         size="small"
                         disabled={count === 1}
-                        onClick={() => handleCountChange(item._id, count - 1, maxQty)}
+                        onClick={() =>
+                          handleCountChange(item._id, count - 1, maxQty)
+                        }
                         className="bg-zinc-200 hover:bg-zinc-300 rounded-full p-1"
                       >
                         <Remove fontSize="small" />
@@ -128,33 +177,58 @@ const CartItems = () => {
                         type="number"
                         size="small"
                         value={count}
-                        onChange={(e) => handleCountChange(item._id, Number(e.target.value), maxQty)}
+                        onChange={(e) =>
+                          handleCountChange(
+                            item._id,
+                            Number(e.target.value),
+                            maxQty
+                          )
+                        }
                         className="w-14 [&_input]:text-center [&_input]:font-semibold [&_input]:text-green-800"
                         inputProps={{ min: 1, max: maxQty }}
                         sx={{
-                          "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": { WebkitAppearance: "none", margin: 0 },
-                          "& input[type=number]": { MozAppearance: "textfield" },
+                          "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button":
+                            { WebkitAppearance: "none", margin: 0 },
+                          "& input[type=number]": {
+                            MozAppearance: "textfield",
+                          },
                         }}
                       />
                       <IconButton
                         size="small"
                         disabled={count === maxQty}
-                        onClick={() => handleCountChange(item._id, count + 1, maxQty)}
+                        onClick={() =>
+                          handleCountChange(item._id, count + 1, maxQty)
+                        }
                         className="bg-zinc-200 hover:bg-zinc-300 rounded-full p-1"
                       >
                         <AddSharp fontSize="small" />
                       </IconButton>
                     </Box>
                   </TableCell>
-                  <TableCell align="center" className="text-emerald-600 font-bold font-serif">${(count * item.product.price).toFixed(2)}</TableCell>
-                  <TableCell align="center"><RemoveCartItem _id={item._id} /></TableCell>
+                  <TableCell
+                    align="center"
+                    className="text-emerald-600 font-bold font-serif"
+                  >
+                    ${(count * item.product.price).toFixed(2)}
+                  </TableCell>
+                  <TableCell align="center">
+                    <RemoveCartItem _id={item._id} />
+                  </TableCell>
                 </TableRow>
               );
             })}
             <TableRow>
               <TableCell colSpan={3} />
-              <TableCell align="right"><span className="font-bold text-lg font-serif">Total</span></TableCell>
-              <TableCell align="center" className="text-green-900 font-bold text-lg font-serif">${totalAmount.toFixed(2)}</TableCell>
+              <TableCell align="right">
+                <span className="font-bold text-lg font-serif">Total</span>
+              </TableCell>
+              <TableCell
+                align="center"
+                className="text-green-900 font-bold text-lg font-serif"
+              >
+                ${totalAmount.toFixed(2)}
+              </TableCell>
               <TableCell />
             </TableRow>
           </TableBody>
@@ -169,9 +243,18 @@ const CartItems = () => {
 
 export default CartItems;
 
-const CenteredText = ({ text, error = false }: { text: string; error?: boolean }) => (
+const CenteredText = ({
+  text,
+  error = false,
+}: {
+  text: string;
+  error?: boolean;
+}) => (
   <Box className="mt-16 flex justify-center items-center">
-    <Typography variant="h6" className={`font-serif ${error ? "text-red-600" : "text-zinc-600"}`}>
+    <Typography
+      variant="h6"
+      className={`font-serif ${error ? "text-red-600" : "text-zinc-600"}`}
+    >
       {text}
     </Typography>
   </Box>

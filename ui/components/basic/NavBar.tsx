@@ -26,6 +26,7 @@ import { axiosInstance } from "@/lib/axios.instance";
 import { IError } from "@/interface/error.interface";
 import GreetUser from "./GreetUser";
 import AccountSetting from "../Account/AccountSetting";
+import SearchBar from "./SearchBar";
 
 const NavBar = () => {
   const router = useRouter();
@@ -146,9 +147,15 @@ const NavBar = () => {
   return (
     <Box className="bg-green-700 w-full py-3 px-4 shadow">
       <Box className="max-w-7xl mx-auto flex items-center justify-between">
-        <Typography variant="h5" className="text-white font-semibold italic">
-          EMart
-        </Typography>
+        <Box className="flex items-center gap-6 w-full max-w-md">
+          <Typography
+            variant="h5"
+            className="text-white font-semibold italic whitespace-nowrap"
+          >
+            EMart
+          </Typography>
+          <SearchBar />
+        </Box>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex gap-6 items-center">
