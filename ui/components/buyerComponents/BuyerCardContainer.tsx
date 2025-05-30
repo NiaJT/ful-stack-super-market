@@ -21,9 +21,9 @@ const BuyerCardContainer = (props: { userRole: string }) => {
     enabled: props.userRole === "buyer",
   });
   const productList: IProduct[] = data?.data?.productList;
-  console.log(productList);
+
   const totalPages: number = data?.data?.totalPages;
-  console.log(totalPages);
+
   if (isPending) {
     return <CircularProgress />;
   }

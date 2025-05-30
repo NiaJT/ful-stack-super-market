@@ -1,10 +1,12 @@
-import express from "express";
+import express, { text } from "express";
 import connectDB from "./connectDB.js";
 import { userController } from "./user/user.controller.js";
 import { productController } from "./product/product.controller.js";
 import { cartController } from "./cart/cart.controller.js";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
+import productTable from "./product/product.model.js";
+import textInitializer from "./product/product.initializer.js";
 const limiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
   limit: 10, // Limit each IP to 10 requests per `window` (here, per 1 minute).
@@ -26,6 +28,8 @@ app.use(express.json());
 app.use(limiter, userController);
 app.use(productController);
 app.use(cartController);
+
+textInitializer();
 
 app.listen(PORT, () => {
   console.log("App is listening at port 8000");

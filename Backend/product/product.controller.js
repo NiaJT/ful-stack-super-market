@@ -105,31 +105,36 @@ router.post("/product/search", isUser, async (req, res) => {
       return res.status(400).send({ message: "Search keyword is required" });
     }
 
-    // Word-boundary match (starts a word): \bsa
-    const prefixRegex = new RegExp(`\\b${keyword}`, "i");
-    const looseRegex = new RegExp(keyword, "i");
+    function escapeRegex(str) {
+      return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    }
 
-    // 1. Match prefix first
-    const prefixMatches = await productTable
-      .find({ name: { $regex: prefixRegex } })
-      .limit(10);
+    const escapedKeyword = escapeRegex(keyword);
 
-    // 2. Then match all occurrences, excluding already found
-    const looseMatches = await productTable
-      .find({
-        name: { $regex: looseRegex },
-        _id: { $nin: prefixMatches.map((p) => p._id) },
-      })
-      .limit(10);
+    const products = await productTable.aggregate([
+      { $match: { name: { $regex: escapedKeyword, $options: "i" } } },
+      { $limit: 5 },
+      {
+        $project: {
+          seller_id: 1,
+          _id: 1,
+          name: 1,
+        },
+      },
+    ]);
 
-    // Combine
-    const productList = [...prefixMatches, ...looseMatches];
+    if (products.length === 0) {
+      return res
+        .status(200)
+        .send({ message: "No products found", products: [] });
+    }
 
     return res.status(200).send({
       message: "Search results",
-      productList,
+      products,
     });
   } catch (error) {
+    console.error("Search error:", error);
     return res.status(500).send({ message: "Internal Server Error", error });
   }
 });
