@@ -98,6 +98,72 @@ router.post(
     });
   }
 );
+router.post(
+  "/product/buyer/sortlist",
+  isBuyer,
+  validateReqbody(paginationSchema),
+  async (req, res, next) => {
+    console.log(req.body);
+    const page = req.body.page;
+    const limit = req.body.limit;
+    const category = req.body.category.toLowerCase();
+    const sortby = req.body.sortby;
+    let sortField = "name";
+    let sortValue = 1;
+    const matchStage = category ? { category } : {};
+
+    switch (sortby) {
+      case "A-Z":
+        sortField = "name";
+        sortValue = 1;
+        break;
+      case "Z-A":
+        sortField = "name";
+        sortValue = -1;
+        break;
+      case "Price: Low to High":
+        sortField = "price";
+        sortValue = 1;
+        break;
+      case "Price: High to Low":
+        sortField = "price";
+        sortValue = -1;
+        break;
+
+      default:
+        sortField = "name";
+        sortValue = 1;
+    }
+
+    const skip = (page - 1) * limit;
+    const totalItems = await productTable.countDocuments(matchStage);
+    console.log(totalItems);
+    const totalPages = Math.ceil(totalItems / limit);
+    const products = await productTable.aggregate([
+      { $match: matchStage },
+      { $sort: { [sortField]: sortValue } },
+      { $skip: skip },
+      { $limit: limit },
+      {
+        $project: {
+          seller_id: 1,
+          _id: 1,
+          name: 1,
+          brand: 1,
+          price: 1,
+          quantity: 1,
+          image: 1,
+          shortDescription: { $substr: ["$description", 0, 150] },
+        },
+      },
+    ]);
+    res.status(200).send({
+      message: "product list",
+      productList: products,
+      totalPages: totalPages,
+    });
+  }
+);
 router.post("/product/search", isUser, async (req, res) => {
   try {
     const keyword = req.body.search?.trim();
