@@ -5,16 +5,15 @@ import SearchSharpIcon from "@mui/icons-material/SearchSharp";
 import { axiosInstance } from "@/lib/axios.instance";
 import axios, { CancelTokenSource } from "axios";
 import { useRouter } from "next/navigation";
-type Product = {
+interface Product {
   name: string;
   _id: string;
-};
+}
 
 const SearchBar = () => {
   const router = useRouter();
   const [input, setInput] = useState("");
   const [suggestions, setSuggestions] = useState<Product[]>([]);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   useEffect(() => {
     let cancelToken: CancelTokenSource;
@@ -62,11 +61,16 @@ const SearchBar = () => {
             ? suggestions
             : [{ name: "No product Found", _id: "0" }]
         }
-        getOptionLabel={(option) => option.name || ""}
+        getOptionLabel={(option) =>
+          typeof option === "string" ? option : option.name || ""
+        }
         onInputChange={(_, newInput) => setInput(newInput)}
         onChange={(_, newValue) => {
-          setSelectedProduct(newValue);
-          if (newValue && newValue._id !== "0") {
+          if (
+            newValue &&
+            typeof newValue !== "string" &&
+            newValue._id !== "0"
+          ) {
             router.replace(`/product-detail/${newValue._id}`);
           }
         }}

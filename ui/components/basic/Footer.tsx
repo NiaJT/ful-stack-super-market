@@ -48,7 +48,7 @@ const Footer = () => {
             {categories.map((item) => (
               <Link
                 key={item}
-                href="#"
+                href={`/category/${item}`}
                 className="capitalize text-gray-400 hover:text-green-400 transition"
               >
                 {item}

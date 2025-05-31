@@ -2,7 +2,7 @@ import { Box, Typography } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import CategoryCard from "./CategoryCard";
 
-const category = [
+export const categories = [
   { name: "Electronics", image: "/categoryImages/electronics.jpg" },
   { name: "Clothing", image: "/categoryImages/clothing.jpg" },
   { name: "Furniture", image: "/categoryImages/furniture.jpg" },
@@ -19,7 +19,7 @@ const CategoryList = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev < category.length - 1 ? prev + 1 : 0));
+      setCurrentIndex((prev) => (prev < categories.length - 1 ? prev + 1 : 0));
     }, 2200);
     return () => clearInterval(interval);
   }, []);
@@ -50,7 +50,7 @@ const CategoryList = () => {
           ref={scrollRef}
           className="flex overflow-x-auto gap-4 scroll-smooth snap-x snap-mandatory custom-scrollbar px-2"
         >
-          {category.map((item, index) => (
+          {categories.map((item, index) => (
             <Box
               key={index}
               className="flex-shrink-0 snap-start w-[70%] sm:w-[45%] md:w-[30%] lg:w-[22%] xl:w-[200px]"
