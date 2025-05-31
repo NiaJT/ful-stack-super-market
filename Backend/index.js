@@ -25,7 +25,7 @@ app.use(
 );
 await connectDB();
 app.use(express.json());
-app.use(limiter, userController);
+app.use(userController);
 app.use(productController);
 app.use(cartController);
 

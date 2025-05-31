@@ -50,12 +50,12 @@ const SearchBar = () => {
         cancelToken.cancel("Operation canceled due to new request.");
     };
   }, [input]);
-
   return (
     <Box className="flex gap-2 items-center w-[60%] h-12 max-w-md mx-auto bg-gray-100 px-3 py-2 rounded-lg shadow">
       <Autocomplete
         freeSolo
         disableClearable
+        filterOptions={(options) => options}
         options={
           suggestions.length > 0
             ? suggestions

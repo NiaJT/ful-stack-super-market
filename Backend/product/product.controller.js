@@ -105,25 +105,39 @@ router.post("/product/search", isUser, async (req, res) => {
       return res.status(400).send({ message: "Search keyword is required" });
     }
 
+    if (keyword.length < 2) {
+      return res.status(400).send({ message: "Keyword too short" });
+    }
+
     function escapeRegex(str) {
       return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     }
 
     const escapedKeyword = escapeRegex(keyword);
+    let products = [];
 
-    const products = await productTable.aggregate([
-      { $match: { name: { $regex: escapedKeyword, $options: "i" } } },
-      { $limit: 5 },
-      {
-        $project: {
-          seller_id: 1,
-          _id: 1,
-          name: 1,
+    if (isBuyer) {
+      products = await productTable.aggregate([
+        { $match: { name: { $regex: escapedKeyword, $options: "i" } } },
+        { $limit: 5 },
+        { $project: { seller_id: 1, _id: 1, name: 1 } },
+      ]);
+    } else if (isSeller) {
+      products = await productTable.aggregate([
+        {
+          $match: {
+            name: { $regex: escapedKeyword, $options: "i" },
+            sellerId: req.loggedInUser,
+          },
         },
-      },
-    ]);
+        { $limit: 5 },
+        { $project: { seller_id: 1, _id: 1, name: 1 } },
+      ]);
+    } else {
+      return res.status(403).send({ message: "Unauthorized role" });
+    }
 
-    if (products.length === 0) {
+    if (!products.length) {
       return res
         .status(200)
         .send({ message: "No products found", products: [] });
