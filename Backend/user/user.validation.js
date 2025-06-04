@@ -20,3 +20,15 @@ export const registerUserSchema = yup.object({
   role: yup.string().lowercase().required().trim().oneOf(["seller", "buyer"]),
   address: yup.string().required().trim().max(255),
 });
+export const updateUserSchema = yup.object({
+  firstName: yup.string().required().trim().max(50),
+  lastName: yup.string().required().trim().max(50),
+  gender: yup
+    .string()
+    .lowercase()
+    .required()
+    .trim()
+    .oneOf(["male", "female", "other"]),
+  dob: yup.date().max(dayjs()).notRequired(),
+  address: yup.string().required().trim().max(255),
+});

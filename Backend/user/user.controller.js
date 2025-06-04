@@ -3,11 +3,12 @@ import mongoose from "mongoose";
 import UserTable from "./user.model.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { loginCredentialsSchema } from "./user.validation.js";
+import { loginCredentialsSchema, updateUserSchema } from "./user.validation.js";
 import yup from "yup";
 import { registerUserSchema } from "./user.validation.js";
 const router = express.Router();
 import validateReqbody from "../middlware/validatereqbody.js";
+import { isUser } from "./../middlware/authentication.middleware.js";
 
 router.post(
   "/user/register",
@@ -54,4 +55,43 @@ router.post(
       .send({ message: "Success", accessToken: token, userDetails: user });
   }
 );
+router.post(
+  "/user/update",
+  isUser,
+  validateReqbody(updateUserSchema),
+  async (req, res) => {
+    try {
+      const userId = req.loggedInUser;
+
+      // Extract allowed keys from Yup schema
+      const allowedFields = Object.keys(updateUserSchema.fields);
+      const updateData = {};
+
+      // Build updateData with only allowed fields
+      for (let key of allowedFields) {
+        if (req.body[key] !== undefined) {
+          updateData[key] = req.body[key];
+        }
+      }
+
+      const updatedUser = await UserTable.findByIdAndUpdate(
+        userId,
+        updateData,
+        { new: true }
+      );
+
+      if (!updatedUser) {
+        return res.status(404).send({ message: "User not found" });
+      }
+
+      return res
+        .status(200)
+        .send({ message: "User updated successfully", user: updatedUser });
+    } catch (error) {
+      console.error("Update error:", error);
+      return res.status(500).send({ message: "Internal server error" });
+    }
+  }
+);
+
 export { router as userController };
