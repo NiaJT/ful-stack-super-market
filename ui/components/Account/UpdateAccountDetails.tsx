@@ -15,11 +15,12 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Formik } from "formik";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { updateUserSchema } from "./../../../Backend/user/user.validation";
+
 interface IUpdateUserForm {
   firstName: string;
   lastName: string;
@@ -27,37 +28,53 @@ interface IUpdateUserForm {
   dob: string;
   address: string;
 }
+
 const UpdateAccountDetails = () => {
   const router = useRouter();
-  const { isPending, mutate } = useMutation({
+
+  const { isPending: isInfoPending, data } = useQuery<IUpdateUserForm>({
+    queryKey: ["get-user-info"],
+    queryFn: async () => {
+      const response = await axiosInstance.get("/user/info");
+      return response.data.userInfo;
+    },
+  });
+
+  const { isPending: isUpdatePending, mutate } = useMutation({
     mutationKey: ["update-user"],
     mutationFn: async (values: IUpdateUserForm) => {
-      return await axiosInstance.post("/user/update", values);
+      console.log("Sending data to /user/update:", values);
+      const response = await axiosInstance.post("/user/update", values);
+      return response;
     },
+
     onSuccess: (res: IResponse) => {
-      router.push("/login");
       toast.success(res.data.message);
+      router.push("/");
     },
     onError: (error: IError) => {
       toast.error(error.response.data.message);
     },
   });
-  if (isPending) {
+
+  if (isInfoPending || !data) {
     return <LinearProgress />;
   }
+
   return (
     <Box className="flex justify-center items-center min-h-screen mt-4">
       <Formik
+        enableReinitialize
         initialValues={{
-          firstName: "",
-          lastName: "",
-          gender: "",
-          dob: "",
-          role: "",
-          address: "",
+          firstName: data?.firstName || "",
+          lastName: data?.lastName || "",
+          gender: data?.gender || "",
+          dob: data?.dob.split("T")[0] || "",
+          address: data?.address || "",
         }}
-        validationSchema={RegisterFormSchema}
-        onSubmit={async (values: IUpdateUserForm) => {
+        validationSchema={updateUserSchema}
+        onSubmit={(values: IUpdateUserForm) => {
+          console.log("Formik submitted values:", values);
           mutate(values);
         }}
       >
@@ -130,12 +147,7 @@ const UpdateAccountDetails = () => {
               type="submit"
               color="success"
               variant="contained"
-              onSubmit={() => (
-                <Link
-                  href="/login"
-                  className="text-emerald-700 hover:text-emerald-950"
-                ></Link>
-              )}
+              disabled={isUpdatePending}
             >
               SUBMIT
             </Button>

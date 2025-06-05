@@ -1,4 +1,4 @@
-import yup from "yup";
+import * as yup from "yup";
 import dayjs from "dayjs";
 export const loginCredentialsSchema = yup.object({
   email: yup.string().email().required().lowercase().trim(),

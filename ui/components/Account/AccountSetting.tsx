@@ -85,7 +85,11 @@ const AccountSetting = (props: { userName: string }) => {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        <MenuItem onClick={handleClose}>
+        <MenuItem
+          onClick={() => {
+            router.replace("/account");
+          }}
+        >
           <Avatar /> Profile
         </MenuItem>
         <MenuItem onClick={handleClose}>

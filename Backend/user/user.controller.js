@@ -93,5 +93,21 @@ router.post(
     }
   }
 );
+router.get("/user/info", isUser, async (req, res) => {
+  try {
+    const userId = req.loggedInUser;
+    const userInfo = await UserTable.findById(userId).select(
+      "firstName lastName dob gender address"
+    );
+
+    if (!userInfo) {
+      return res.status(404).send({ message: "Couldn't find User" });
+    }
+    return res.status(200).send({ message: "User Found", userInfo });
+  } catch (error) {
+    console.error("Getting info error:", error);
+    return res.status(500).send({ message: "Internal server error" });
+  }
+});
 
 export { router as userController };
