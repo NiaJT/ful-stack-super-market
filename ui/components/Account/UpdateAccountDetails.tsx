@@ -2,7 +2,6 @@
 import { IError } from "@/interface/error.interface";
 import { IResponse } from "@/interface/response.interface";
 import { axiosInstance } from "@/lib/axios.instance";
-import { RegisterFormSchema } from "@/validationSchema/user.registerSchema";
 import {
   Box,
   Button,
@@ -15,7 +14,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Formik } from "formik";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
@@ -31,6 +30,7 @@ interface IUpdateUserForm {
 
 const UpdateAccountDetails = () => {
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const { isPending: isInfoPending, data } = useQuery<IUpdateUserForm>({
     queryKey: ["get-user-info"],
@@ -43,8 +43,9 @@ const UpdateAccountDetails = () => {
   const { isPending: isUpdatePending, mutate } = useMutation({
     mutationKey: ["update-user"],
     mutationFn: async (values: IUpdateUserForm) => {
-      console.log("Sending data to /user/update:", values);
       const response = await axiosInstance.post("/user/update", values);
+      window.localStorage.setItem("firstName", values.firstName);
+      queryClient.invalidateQueries();
       return response;
     },
 
