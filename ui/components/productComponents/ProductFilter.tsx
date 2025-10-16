@@ -36,7 +36,7 @@ const ProductFilter = () => {
   const [sortby, setSortby] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { mutate, data, isPending } = useMutation({
+  const { mutate, data } = useMutation({
     mutationKey: ["Sort-products", currentPage],
     mutationFn: async (value: ISortValues) => {
       const response = await axiosInstance.post(
