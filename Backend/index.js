@@ -20,7 +20,11 @@ const PORT = 8000;
 
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://192.168.1.9:3000/"],
+    origin: [
+      "http://localhost:3000",
+      "http://192.168.1.9:3000/",
+      "https://emart-lyart.vercel.app",
+    ],
   })
 );
 await connectDB();
