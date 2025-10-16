@@ -1,7 +1,7 @@
 import { AxiosInstance } from "axios";
 import axios from "axios";
 export const axiosInstance: AxiosInstance = axios.create({
-  baseURL: "http://localhost:8000",
+  baseURL: "https://ful-stack-super-market.onrender.com",
   timeout: 5000,
 });
 axiosInstance.interceptors.request.use(function (config) {

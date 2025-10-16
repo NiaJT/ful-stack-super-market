@@ -15,11 +15,23 @@ import {
   Typography,
 } from "@mui/material";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import dayjs from "dayjs";
 import { Formik } from "formik";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { updateUserSchema } from "./../../../Backend/user/user.validation";
-
+import * as yup from "yup";
+const updateUserSchema = yup.object({
+  firstName: yup.string().required().trim().max(50),
+  lastName: yup.string().required().trim().max(50),
+  gender: yup
+    .string()
+    .lowercase()
+    .required()
+    .trim()
+    .oneOf(["male", "female", "other"]),
+  dob: yup.date().max(dayjs()).notRequired(),
+  address: yup.string().required().trim().max(255),
+});
 interface IUpdateUserForm {
   firstName: string;
   lastName: string;
