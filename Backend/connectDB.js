@@ -1,13 +1,21 @@
 import mongoose from "mongoose";
-
-const dbName = "mini-amazon";
-const dbUsername = "avocado";
-const dbPassword = encodeURIComponent("avocado@123");
-const dbHost = "cluster0.7mfs2.mongodb.net";
-const dbOptions = "retryWrites=true&w=majority&appName=Cluster0";
+import dotenv from "dotenv";
+dotenv.config();
+const dbName = process.env.dbName;
+const dbUsername = process.env.dbUsername;
+const dbPassword = process.env.dbPassword;
+const dbHost = process.env.dbHost;
+const dbOptions = process.env.dbOptions;
 const connectDB = async () => {
+  if (!dbName || !dbUsername || !dbPassword || !dbHost) {
+    console.error("Missing MongoDB environment variables");
+    process.exit(1);
+  }
+
   try {
-    const url = `mongodb+srv://${dbUsername}:${dbPassword}@${dbHost}/${dbName}?${dbOptions}`;
+    const url = `mongodb+srv://${dbUsername}:${encodeURIComponent(
+      dbPassword
+    )}@${dbHost}/${dbName}?${dbOptions}`;
     await mongoose.connect(url);
     console.log("Database Connected Successfully");
   } catch (error) {
